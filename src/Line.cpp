@@ -17,3 +17,7 @@ void Line::draw(std::ostream & os) const {
 float Line::area() const{
     return 0.0f;
 }
+
+float Line::perimeter() const {
+    return 0.0f;
+}

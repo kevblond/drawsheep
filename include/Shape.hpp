@@ -10,6 +10,7 @@ class Shape{
 public:
     virtual void draw(std::ostream &os = std::cout) const = 0;//pour le moment draw sur terminal
     virtual float area() const = 0;
+    virtual float perimeter() const = 0;
     virtual ~Shape(){};
 
 };

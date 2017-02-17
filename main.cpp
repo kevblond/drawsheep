@@ -8,10 +8,11 @@
 
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
     Point p;
     Point p2(20.0f,30.0f);
-    Circle c(p,20);
+    Circle c(p2,20);
     c.draw(std::cout);
+    Ellipse e(p2,50,20,20);
+    e.draw(std::cout);
     return 0;
 }

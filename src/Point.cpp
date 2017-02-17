@@ -6,3 +6,9 @@
 Point::Point(float a, float b):x(a),y(b)
 {
 }
+
+std::ostream & operator<< (std::ostream & os, const Point & p)
+{
+    os << '(' << p.x << ',' << p.y << ')';
+    return os;
+}

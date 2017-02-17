@@ -12,6 +12,7 @@ private:
     float y;
 public:
     Point(float a=0,float b=0);
+    friend std::ostream & operator<< (std::ostream & os, const Point & p);
 };
 
 
