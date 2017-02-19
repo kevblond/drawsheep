@@ -17,3 +17,7 @@ void Polygon::draw(std::ostream & os) const {
 float Polygon::area() const{
     return 0.0f;
 }
+
+float Polygon::perimeter() const{
+    return 0.0f;
+}

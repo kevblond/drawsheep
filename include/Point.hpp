@@ -14,7 +14,7 @@ private:
 public:
     Point(float a=0,float b=0);
     friend std::ostream & operator<< (std::ostream & os, const Point & p);
-    friend static float distance(Point p1,Point p2);
+    friend float distance(Point p1,Point p2);
 };
 
 
