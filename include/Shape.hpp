@@ -5,6 +5,7 @@
 #ifndef DRAWSHEEP_SHAPE_HPP
 #define DRAWSHEEP_SHAPE_HPP
 #include<iostream>
+#include<Point.hpp>
 
 class Shape{
 public:
@@ -12,7 +13,6 @@ public:
     virtual float area() const = 0;
     virtual float perimeter() const = 0;
     virtual ~Shape(){};
-
 };
 
 #endif //DRAWSHEEP_SHAPE_HPP

@@ -19,5 +19,5 @@ float Line::area() const{
 }
 
 float Line::perimeter() const {
-    return 0.0f;
+    return distance(A,B);
 }
