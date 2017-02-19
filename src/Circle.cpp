@@ -20,3 +20,9 @@ float Circle::area() const{
 float Circle::perimeter() const{
     return M_PI*2*ray;
 }
+
+
+float Circle::dist_origin() const{
+    Point origin;
+    return distance(center,origin) - ray;
+}

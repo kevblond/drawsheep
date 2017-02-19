@@ -9,12 +9,13 @@
 
 class Shape{
 private:
-    //vec3 matrix = matrice identité
+    //mat3 matrix = matrice identité
     //utilisé pour les rotate translate etc...
 public:
     virtual void draw(std::ostream &os = std::cout) const = 0;//pour le moment draw sur terminal
     virtual float area() const = 0;
     virtual float perimeter() const = 0;
+    virtual float dist_origin() const = 0;
     virtual ~Shape(){};
 //    virtual void rotate(float angle);
 //    virtual void translate(float x, float y);

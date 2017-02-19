@@ -8,15 +8,10 @@
 
 
 int main() {
-    Point p;
-    Point p2(3,3);
-    Point p3(0,3);
-    std::vector<Point> vecp;
-    vecp.push_back(p);
-    vecp.push_back(p2);
-    vecp.push_back(p3);
-    Polygon pol(vecp);
-    std::cout << pol.area() << std::endl;
-    std::cout << pol.perimeter() << std::endl;
+    Point p(3,3);
+    Point p2(4,3);
+    Point p3(3,4);
+    Ellipse e(p,p2,p3);
+    std::cout << e.dist_origin() << std::endl;
     return 0;
 }

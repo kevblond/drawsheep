@@ -21,3 +21,10 @@ float Line::area() const{
 float Line::perimeter() const {
     return distance(A,B);
 }
+
+float Line::dist_origin() const{
+    Point origin;
+    float dist_A = distance(A,origin);
+    float dist_B = distance(B,origin);
+    return dist_A < dist_B ? dist_A : dist_B;
+}

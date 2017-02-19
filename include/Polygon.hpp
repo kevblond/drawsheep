@@ -17,6 +17,7 @@ public:
     virtual void draw(std::ostream &os = std::cout) const;
     virtual float area() const;
     virtual float perimeter() const;
+    virtual float dist_origin() const;
 };
 
 

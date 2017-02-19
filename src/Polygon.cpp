@@ -39,3 +39,7 @@ float Polygon::perimeter() const{
     }
     return sum_dist;
 }
+
+float Polygon::dist_origin() const{
+    return 0;
+}
