@@ -9,10 +9,14 @@
 
 int main() {
     Point p;
-    Point p2(20.0f,30.0f);
-    Circle c(p2,20);
-    c.draw(std::cout);
-    Ellipse e(p2,50,20,20);
-    e.draw(std::cout);
+    Point p2(3,3);
+    Point p3(0,3);
+    std::vector<Point> vecp;
+    vecp.push_back(p);
+    vecp.push_back(p2);
+    vecp.push_back(p3);
+    Polygon pol(vecp);
+    std::cout << pol.area() << std::endl;
+    std::cout << pol.perimeter() << std::endl;
     return 0;
 }

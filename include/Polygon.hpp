@@ -5,14 +5,14 @@
 #ifndef DRAWSHEEP_POLYGON_HPP
 #define DRAWSHEEP_POLYGON_HPP
 #include <Shape.hpp>
-#include<Point.hpp>
+#include <vector>
 
 
 class Polygon : public Shape {
 private:
-    //comment représenter un polygone?
+    std::vector<Point> vertices;
 public:
-    Polygon();
+    Polygon(std::vector<Point> v);
     virtual ~Polygon();
     virtual void draw(std::ostream &os = std::cout) const;
     virtual float area() const;

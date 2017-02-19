@@ -7,6 +7,14 @@ Point::Point(float a, float b):x(a),y(b)
 {
 }
 
+float Point::get_x() const {
+    return x;
+}
+
+float Point::get_y() const {
+    return y;
+}
+
 std::ostream & operator<< (std::ostream & os, const Point & p)
 {
     os << '(' << p.x << ',' << p.y << ')';
