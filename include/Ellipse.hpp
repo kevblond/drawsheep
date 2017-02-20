@@ -14,8 +14,7 @@ private:
     Point center;
     float rayA;
     float rayB;
-    Point point_X_ray;
-    Point point_Y_ray;
+    float angle = 0.0f;
 public:
     Ellipse(const Point & cent,float rayA, float rayB);
     virtual ~Ellipse();

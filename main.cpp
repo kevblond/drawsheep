@@ -8,7 +8,7 @@
 
 
 int main() {
-    Point p(11,11);
+    Point p(3,3);
     float rx = 2;
     float ry = 2;
     Ellipse e(p,rx,ry);

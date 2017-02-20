@@ -22,7 +22,6 @@ float Ellipse::perimeter() const{
 float Ellipse::area() const{
     return M_PI*rayA*rayB;
 }
-
 float Ellipse::dist_origin() const{
     Point origin;
     float x0 = center.get_x();
@@ -30,15 +29,11 @@ float Ellipse::dist_origin() const{
     float Ac = rayA*rayA;
     float Bc = rayB*rayB;
     //si l'origine est contenu dans l'ellipse
-    if(x0*x0 / Ac + y0*y0 / Bc <= 1){
+    if((x0*cos(angle)+y0*sin(angle))*(x0*cos(angle)+y0*sin(angle)) / Ac + (-x0*sin(angle)+y0*cos(angle))*(-x0*sin(angle)+y0*cos(angle)) / Bc <= 1){
         return 0;
     }
-    //si le centre de l'ellipse se trouve sur l'ordonnée
-    if(x0 == 0){
-        return y0-rayB;
-    }
     //coef directeur de la droite origin-centre
-    float a = y0 / x0;
+    float a = x0==0 ? 0 : y0 / x0;
     //b = 0 pour la droite ax+b
     //eq ellipse : (x-x0)² / rayA² + (y-y0)² / rayB² = 1
     //eq line : y = a x
@@ -52,20 +47,75 @@ float Ellipse::dist_origin() const{
         exit(EXIT_FAILURE);
     }
     if(delta == 0){
-        float x = 2*Bc*x0+2*Ac*a*y0 / 2*Bc + 2*Ac*a*a;
+        float x = 2*Bc*x0+2*Ac*a*y0 / (2*Bc + 2*Ac*a*a);
         float y = a*x;
-        return distance(Point(x,y),origin);
+        float x_inc = x * cos(angle) + y * sin(angle);
+        float y_inc = -x * sin(angle) + y * cos(angle);
+        return distance(Point(x_inc,y_inc),origin);
     }
-    float x1 = (2*Bc*x0+2*Ac*a*y0 - sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
-    float y1 = a*x1;
-    float x2 = (2*Bc*x0+2*Ac*a*y0 + sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
-    float y2 = a*x2;
+    float x1_cart = (2*Bc*x0+2*Ac*a*y0 - sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
+    float y1_cart = a*x1_cart;
+    float x2_cart = (2*Bc*x0+2*Ac*a*y0 + sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
+    float y2_cart = a*x2_cart;
 
-    Point intersect1(x1,y1);
-    Point intersect2(x2,y2);
+    //prise en compte de l'angle
+    float x1_inc = x1_cart * cos(angle) + y1_cart * sin(angle);
+    float y1_inc = -x1_cart * sin(angle) + y1_cart * cos(angle);
+    float x2_inc = x2_cart * cos(angle) + y2_cart * sin(angle);
+    float y2_inc = -x2_cart * sin(angle) + y2_cart * cos(angle);
+
+    Point intersect1(x1_inc,y1_inc);
+    Point intersect2(x2_inc,y2_inc);
     float dist_1 = distance(intersect1,origin);
     float dist_2 = distance(intersect2,origin);
 
     return dist_1 < dist_2 ? dist_1 : dist_2;
 
 }
+//float Ellipse::dist_origin() const{
+//    Point origin;
+//    float x0 = center.get_x();
+//    float y0 = center.get_y();
+//    float Ac = rayA*rayA;
+//    float Bc = rayB*rayB;
+//    //si l'origine est contenu dans l'ellipse
+//    if(x0*x0 / Ac + y0*y0 / Bc <= 1){
+//        return 0;
+//    }
+//    //si le centre de l'ellipse se trouve sur l'ordonnée
+//    if(x0 == 0){
+//        return y0-rayB;
+//    }
+//    //coef directeur de la droite origin-centre
+//    float a = y0 / x0;
+//    //b = 0 pour la droite ax+b
+//    //eq ellipse : (x-x0)² / rayA² + (y-y0)² / rayB² = 1
+//    //eq line : y = a x
+//    //systeme a deux solution ( les deux intersections de lellipse avec la droite)
+//    // delta = 8B²x0A²ay0 - 4B²A²y0² - 4A²B⁴ - 4 A²a²B²x0² + 4A⁴a²B²
+//    // x1 = (2B²x0+2A²ay0 - sqrt(delta) ) / 2B² + 2A²a²  et y1 = ax1
+//    // x2 = (2B²x0+2A²ay0 + sqrt(delta) ) / 2B² + 2A²a²  et y2 = ax2
+//    float delta = 8 * Bc * x0 * Ac * a * y0 - 4 * Bc * Ac * y0*y0 + 4 * Ac * Bc*Bc - 4 * Ac * a*a * Bc * x0*x0 + 4 * Ac*Ac * a*a * Bc;
+//    if(delta < 0){
+//        std::cerr << "delta < 0 distance origin" << std::endl;
+//        exit(EXIT_FAILURE);
+//    }
+//    if(delta == 0){
+//        float x = 2*Bc*x0+2*Ac*a*y0 / (2*Bc + 2*Ac*a*a);
+//        float y = a*x;
+//        return distance(Point(x,y),origin);
+//    }
+//    float x1 = (2*Bc*x0+2*Ac*a*y0 - sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
+//    float y1 = a*x1;
+//    float x2 = (2*Bc*x0+2*Ac*a*y0 + sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
+//    float y2 = a*x2;
+//
+//    Point intersect1(x1,y1);
+//    Point intersect2(x2,y2);
+//    float dist_1 = distance(intersect1,origin);
+//    float dist_2 = distance(intersect2,origin);
+//
+//    return dist_1 < dist_2 ? dist_1 : dist_2;
+//
+//}
+
