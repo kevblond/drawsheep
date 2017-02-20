@@ -15,6 +15,11 @@ float Point::get_y() const {
     return y;
 }
 
+
+bool Point::operator== (const Point & p) const{
+    return p.x == x && p.y == y;
+}
+
 std::ostream & operator<< (std::ostream & os, const Point & p)
 {
     os << '(' << p.x << ',' << p.y << ')';

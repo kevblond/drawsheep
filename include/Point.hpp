@@ -15,6 +15,7 @@ public:
     Point(float a=0,float b=0);
     float get_x() const;
     float get_y() const;
+    bool operator== (const Point & p) const;
     friend std::ostream & operator<< (std::ostream & os, const Point & p);
     friend float distance(Point p1,Point p2);
 };
