@@ -21,9 +21,14 @@ int main(int argc, char **argv) {
     float ry = 2;
     Ellipse e(p,rx,ry);
 
-    Line l(Point(12,3),Point(5,8));
-    Point p2(1,5);
-    std::cout << l.dist_point(p2) << std::endl;
-    std::cout << l.dist_point(p) << std::endl;
+    std::vector<Point> polyPoint;
+    polyPoint.push_back(Point(12,3));
+    polyPoint.push_back(Point(5,8));
+    polyPoint.push_back(Point(0,2));
+    polyPoint.push_back(Point(2,0));
+    Polygon pol(polyPoint);
+    std::cout << pol.dist_origin() << std::endl;
+    Line l(Point(0,2),Point(2,0));
+    std::cout << l.dist_origin() << std::endl;
     return app.exec();
 }
