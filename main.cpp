@@ -21,8 +21,8 @@ int main(int argc, char **argv) {
     float ry = 2;
     Ellipse e(p,rx,ry);
 
-    Line l(Point(3,3),Point(4,4));
-    Point p2(1,1);
+    Line l(Point(12,3),Point(5,8));
+    Point p2(1,5);
     std::cout << l.dist_point(p2) << std::endl;
     std::cout << l.dist_point(p) << std::endl;
     return app.exec();
