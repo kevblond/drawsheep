@@ -19,6 +19,8 @@ public:
     virtual float area() const;
     virtual float perimeter() const;
     virtual float dist_origin() const;
+    float dist_point(Point p) const;
+    Point projete_orthog(Point p) const;
 };
 
 

@@ -3,6 +3,7 @@
 //
 
 #include <Polygon.hpp>
+#include <include/Line.hpp>
 
 Polygon::Polygon(std::vector<Point> v)
 {
@@ -41,5 +42,13 @@ float Polygon::perimeter() const{
 }
 
 float Polygon::dist_origin() const{
-    return 0;
+    Point origin;
+    float dist_min = 400000;
+    for(int i = 0,j = vertices.size()-1 ; i < vertices.size() ; j=i++){
+        Line l(vertices[i],vertices[j]);
+        float dist_line = l.dist_point(origin);
+        if(dist_line < dist_min){
+            dist_min = dist_line;
+        }
+    }
 }

@@ -4,6 +4,7 @@
 #include <Polygon.hpp>
 #include <QApplication>
 #include <QPushButton>
+#include <Line.hpp>
 
 // TODO Faire des tests unitaires, rapporte des points dans le rapport
 
@@ -19,6 +20,10 @@ int main(int argc, char **argv) {
     float rx = 2;
     float ry = 2;
     Ellipse e(p,rx,ry);
-    std::cout << e.dist_origin() << std::endl;
+
+    Line l(Point(3,3),Point(4,4));
+    Point p2(1,1);
+    std::cout << l.dist_point(p2) << std::endl;
+    std::cout << l.dist_point(p) << std::endl;
     return app.exec();
 }
