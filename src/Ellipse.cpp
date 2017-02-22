@@ -94,3 +94,7 @@ void Ellipse::central_sym(Point c_sym){
     center.central_sym(c_sym);
 }
 
+void Ellipse::axial_sym(Point p_origin_axis, Point p_extremity_axis){
+    center.axial_sym(p_origin_axis,p_extremity_axis);
+}
+

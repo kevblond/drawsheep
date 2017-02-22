@@ -3,6 +3,8 @@
 //
 
 #include <Point.hpp>
+#include <include/Line.hpp>
+
 Point::Point(float a, float b):x(a),y(b)
 {
 }
@@ -34,9 +36,15 @@ Point& Point::operator*= (float s) {
 
 
 Point& Point::central_sym(Point c_sym){
-    x = -fabsf(c_sym.get_x() - x);
-    y = -fabsf(c_sym.get_y() - y);
+    x = c_sym.get_x() - (x-c_sym.get_x());
+    y = c_sym.get_y() - (y-c_sym.get_y());
     return *this;
+}
+
+Point& Point::axial_sym(Point p_origin_axis, Point p_extremity_axis){
+    Line l(p_origin_axis,p_extremity_axis);
+    Point transpose = l.projete_orthog(*this);
+    return central_sym(transpose);
 }
 
 std::ostream & operator<< (std::ostream & os, const Point & p)

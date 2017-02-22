@@ -85,6 +85,14 @@ void Polygon::central_sym(Point c_sym){
     }
 }
 
+void Polygon::axial_sym(Point p_origin_axis, Point p_extremity_axis){
+    for(unsigned long i = 0 ; i < vertices.size() ; i++){
+        vertices[i].axial_sym(p_origin_axis,p_extremity_axis);
+        std::cout << vertices[i] << std::endl;
+    }
+}
+
+//ne fonctionne pas avec les coordonnée négative
 Point Polygon::gravity_center() const{
     float xg = 0;
     float yg = 0;

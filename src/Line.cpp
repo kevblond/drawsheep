@@ -125,6 +125,10 @@ void Line::central_sym(Point c_sym){
     A.central_sym(c_sym);
     B.central_sym(c_sym);
 }
+void Line::axial_sym(Point p_origin_axis, Point p_extremity_axis){
+    A.axial_sym(p_origin_axis,p_extremity_axis);
+    B.axial_sym(p_origin_axis,p_extremity_axis);
+}
 
 Point Line::milieu_segment() const{
     return Point((A.get_x()+B.get_x())/2,(A.get_y()+B.get_y())/2);

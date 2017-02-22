@@ -19,6 +19,7 @@ public:
     Point& operator+= (const Point &p);
     Point& operator*= (float s);
     Point& central_sym(Point c_sym);
+    Point& axial_sym(Point p_origin_axis, Point p_extremity_axis);
     friend std::ostream & operator<< (std::ostream & os, const Point & p);
     friend float distance(Point p1,Point p2);
 };

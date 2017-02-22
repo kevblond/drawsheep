@@ -21,7 +21,7 @@ public:
     virtual void translate(float, float) = 0;
     virtual void scale(float) = 0;
     virtual void central_sym(Point c_sym) = 0;
-//    virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis) = 0;
+    virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis) = 0;
 };
 
 #endif //DRAWSHEEP_SHAPE_HPP

@@ -26,6 +26,7 @@ public:
     virtual void scale(float s);
     virtual void rotate(float angle);
     virtual void central_sym(Point c_sym);
+    virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
 };
 
 #endif //DRAWSHEEP_ELLIPSE_HPP
