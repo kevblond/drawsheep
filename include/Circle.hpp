@@ -5,7 +5,7 @@
 #ifndef DRAWSHEEP_CIRCLE_HPP
 #define DRAWSHEEP_CIRCLE_HPP
 #include<Point.hpp>
-#include <Shape.hpp>
+#include<Shape.hpp>
 #include<cmath>
 
 class Circle : public Shape {
@@ -21,6 +21,7 @@ public:
     virtual float dist_origin() const;
     virtual void translate(float x, float y);
     virtual void scale(float s);
+    virtual void rotate(float angle);
 };
 
 

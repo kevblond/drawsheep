@@ -16,6 +16,7 @@ void Ellipse::draw(std::ostream & os) const {
 
 //approximation du perimetre
 float Ellipse::perimeter() const{
+
     return M_PI*sqrt(2*(rayA*rayA+rayB*rayB));
 }
 
@@ -49,8 +50,8 @@ float Ellipse::dist_origin() const{
     if(delta == 0){
         float x = 2*Bc*x0+2*Ac*a*y0 / (2*Bc + 2*Ac*a*a);
         float y = a*x;
-        float x_inc = x * cos(angle) + y * sin(angle);
-        float y_inc = -x * sin(angle) + y * cos(angle);
+        float x_inc = x * cosf(angle) + y * sinf(angle);
+        float y_inc = -x * sinf(angle) + y * cosf(angle);
         return distance(Point(x_inc,y_inc),origin);
     }
     float x1_cart = (2*Bc*x0+2*Ac*a*y0 - sqrtf(delta)) / (2*Bc + 2*Ac*a*a);
@@ -59,10 +60,10 @@ float Ellipse::dist_origin() const{
     float y2_cart = a*x2_cart;
 
     //prise en compte de l'angle
-    float x1_inc = x1_cart * cos(angle) + y1_cart * sin(angle);
-    float y1_inc = -x1_cart * sin(angle) + y1_cart * cos(angle);
-    float x2_inc = x2_cart * cos(angle) + y2_cart * sin(angle);
-    float y2_inc = -x2_cart * sin(angle) + y2_cart * cos(angle);
+    float x1_inc = x1_cart * cosf(angle) + y1_cart * sinf(angle);
+    float y1_inc = -x1_cart * sinf(angle) + y1_cart * cosf(angle);
+    float x2_inc = x2_cart * cosf(angle) + y2_cart * sinf(angle);
+    float y2_inc = -x2_cart * sinf(angle) + y2_cart * cosf(angle);
 
     Point intersect1(x1_inc,y1_inc);
     Point intersect2(x2_inc,y2_inc);
@@ -81,6 +82,11 @@ void Ellipse::translate(float x, float y){
 void Ellipse::scale(float s){
     rayA *= s;
     rayB *= s;
+}
+
+
+void Ellipse::rotate(float ang){
+    angle += ang;
 }
 
 

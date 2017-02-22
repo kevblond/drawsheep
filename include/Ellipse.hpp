@@ -24,6 +24,7 @@ public:
     virtual float dist_origin() const;
     virtual void translate(float x, float y);
     virtual void scale(float s);
+    virtual void rotate(float ang);
 };
 
 #endif //DRAWSHEEP_ELLIPSE_HPP

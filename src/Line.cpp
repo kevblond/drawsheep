@@ -100,9 +100,33 @@ void Line::translate(float x, float y){
 }
 
 void Line::scale(float s){
-    if(s<0){
+    if(s < 0){
         s=-s;
     }
     A*=s;
     B*=s;
+}
+
+
+void Line::rotate(float angle){
+    Point mid_point = milieu_segment();
+    //rotation depuis l'origine plus facile
+
+    translate(-mid_point.get_x(),-mid_point.get_y());
+    //{
+    //rotation dans le meme sens peut importe A et B
+    if(A.get_x() < B.get_x()){
+        B = Point(B.get_x()*cosf(angle)-B.get_y()*sinf(angle),B.get_y()*cosf(angle)+B.get_x()*sinf(angle));
+        A = Point(A.get_x()*cosf(-angle)-A.get_y()*sinf(-angle),A.get_y()*cosf(-angle)+A.get_x()*sinf(-angle));
+    }
+    else{
+        B = Point(B.get_x()*cosf(-angle)-B.get_y()*sinf(-angle),B.get_y()*cosf(-angle)+B.get_x()*sinf(-angle));
+        A = Point(A.get_x()*cosf(angle)-A.get_y()*sinf(angle),A.get_y()*cosf(angle)+A.get_x()*sinf(angle));
+    }
+    //}
+    translate(mid_point.get_x(),mid_point.get_y());
+}
+
+Point Line::milieu_segment() const{
+    return Point((A.get_x()+B.get_x())/2,(A.get_y()+B.get_y())/2);
 }

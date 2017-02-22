@@ -34,3 +34,7 @@ void Circle::translate(float x, float y) {
 void Circle::scale(float s){
     ray *= s;
 }
+
+void Circle::rotate(float angle){
+    //rotate circle is useless
+}

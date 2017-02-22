@@ -62,5 +62,5 @@ float distance(Point p1, Point p2){
             dist_y = p1.y - p2.y;
         }
     }
-    return sqrt(dist_x*dist_x + dist_y * dist_y);
+    return sqrtf(dist_x*dist_x + dist_y * dist_y);
 }

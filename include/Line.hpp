@@ -21,7 +21,9 @@ public:
     virtual float dist_origin() const;
     virtual void translate(float x, float y);
     virtual void scale(float s);
+    virtual void rotate(float angle);
 
+    Point milieu_segment() const;
     float dist_point(Point p) const;
     Point projete_orthog(Point p) const;
 };
