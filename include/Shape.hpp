@@ -18,8 +18,8 @@ public:
     virtual float dist_origin() const = 0;
     virtual ~Shape(){};
 //    virtual void rotate(float angle);
-//    virtual void translate(float x, float y);
-//    virtual void scale(float s);
+    virtual void translate(float x, float y);
+    virtual void scale(float s);
 //    virtual void central_sym(Point center);
 //    virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
 };

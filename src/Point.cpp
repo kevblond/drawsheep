@@ -20,6 +20,19 @@ bool Point::operator== (const Point & p) const{
     return p.x == x && p.y == y;
 }
 
+Point& Point::operator+= (const Point & p) {
+    x+=p.x;
+    y+=p.y;
+    return *this;
+}
+
+Point& Point::operator*= (float s) {
+    x*=s;
+    y*=s;
+    return *this;
+}
+
+
 std::ostream & operator<< (std::ostream & os, const Point & p)
 {
     os << '(' << p.x << ',' << p.y << ')';

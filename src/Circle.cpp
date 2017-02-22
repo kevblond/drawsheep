@@ -26,3 +26,11 @@ float Circle::dist_origin() const{
     Point origin;
     return distance(center,origin) - ray;
 }
+
+void Circle::translate(float x, float y) {
+    center += Point(x,y);
+}
+
+void Circle::scale(float s){
+    ray *= s;
+}

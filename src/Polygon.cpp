@@ -52,3 +52,17 @@ float Polygon::dist_origin() const{
         }
     }
 }
+
+void Polygon::translate(float x, float y){
+    Point p(x,y);
+    for(Point p_it : vertices){
+        p_it += p;
+    }
+}
+
+
+void Polygon::scale(float s){
+    for(Point p_it : vertices){
+        p_it *= s;
+    }
+}

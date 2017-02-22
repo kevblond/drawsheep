@@ -18,6 +18,8 @@ public:
     virtual float area() const;
     virtual float perimeter() const;
     virtual float dist_origin() const;
+    virtual void translate(float x, float y);
+    virtual void scale(float s);
 };
 
 

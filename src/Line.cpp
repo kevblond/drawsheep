@@ -92,3 +92,17 @@ Point Line::projete_orthog(Point p) const{
     Point h = Point(xh,yh);
     return h;
 }
+
+void Line::translate(float x, float y){
+    Point p(x,y);
+    A+=p;
+    B+=p;
+}
+
+void Line::scale(float s){
+    if(s<0){
+        s=-s;
+    }
+    A*=s;
+    B*=s;
+}
