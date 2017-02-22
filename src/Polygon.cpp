@@ -56,8 +56,8 @@ float Polygon::dist_origin() const{
 
 void Polygon::translate(float x, float y){
     Point p(x,y);
-    for(Point p_it : vertices){
-        p_it += p;
+    for(unsigned long i = 0 ; i < vertices.size() ; i++){
+        vertices[i] += p;
     }
 }
 
@@ -70,5 +70,29 @@ void Polygon::scale(float s){
 
 
 void Polygon::rotate(float angle){
+    Point center = gravity_center();
+    std::cout << center << std::endl;
+    translate(-center.get_x(),-center.get_y());
+    for(unsigned long i = 0 ; i < vertices.size() ; i++){
+        vertices[i] = Point(vertices[i].get_x()*cosf(angle)-vertices[i].get_y()*sinf(angle),vertices[i].get_y()*cosf(angle)+vertices[i].get_x()*sinf(angle));
+    }
+    translate(-center.get_x(),-center.get_y());
+}
 
+void Polygon::central_sym(Point c_sym){
+    for(unsigned long i = 0 ; i < vertices.size() ; i++){
+        vertices[i].central_sym(c_sym);
+    }
+}
+
+Point Polygon::gravity_center() const{
+    float xg = 0;
+    float yg = 0;
+    for(unsigned int i = 0 ; i < vertices.size() - 1 ; i++){
+        xg += (vertices[i].get_x() + vertices[i+1].get_x()) * (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y());
+        yg += (vertices[i].get_y() + vertices[i+1].get_y()) * (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y());
+    }
+    xg *= 1/(6*area());
+    yg *= 1/(6*area());
+    return Point(xg,yg);
 }

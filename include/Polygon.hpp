@@ -21,6 +21,9 @@ public:
     virtual void translate(float x, float y);
     virtual void scale(float s);
     virtual void rotate(float angle);
+    virtual void central_sym(Point c_sym);
+
+    Point gravity_center() const;
 };
 
 

@@ -36,5 +36,10 @@ void Circle::scale(float s){
 }
 
 void Circle::rotate(float angle){
-    //rotate circle is useless
+    //rotation inutile
+}
+
+
+void Circle::central_sym(Point c_sym){
+    center.central_sym(c_sym);
 }

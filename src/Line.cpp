@@ -31,7 +31,7 @@ float Line::dist_point(Point p) const {
     //calcul du projetté orthogonal
     Point h = projete_orthog(p);
     //h contenu dans le segment AB
-    if(A.get_x() < B.get_x() && h.get_x() > A.get_x() && h.get_x() < B.get_x() || A.get_x() > B.get_x() && h.get_x() > B.get_x() && h.get_x() < A.get_x()){
+    if((A.get_x() < B.get_x() && h.get_x() > A.get_x() && h.get_x() < B.get_x()) || A.get_x() > (B.get_x() && h.get_x() > B.get_x() && h.get_x() < A.get_x())){
         return distance(h,p);
     }
     else{
@@ -115,16 +115,15 @@ void Line::rotate(float angle){
     translate(-mid_point.get_x(),-mid_point.get_y());
     //{
     //rotation dans le meme sens peut importe A et B
-    if(A.get_x() < B.get_x()){
-        B = Point(B.get_x()*cosf(angle)-B.get_y()*sinf(angle),B.get_y()*cosf(angle)+B.get_x()*sinf(angle));
-        A = Point(A.get_x()*cosf(-angle)-A.get_y()*sinf(-angle),A.get_y()*cosf(-angle)+A.get_x()*sinf(-angle));
-    }
-    else{
-        B = Point(B.get_x()*cosf(-angle)-B.get_y()*sinf(-angle),B.get_y()*cosf(-angle)+B.get_x()*sinf(-angle));
-        A = Point(A.get_x()*cosf(angle)-A.get_y()*sinf(angle),A.get_y()*cosf(angle)+A.get_x()*sinf(angle));
-    }
+    B = Point(B.get_x()*cosf(angle)-B.get_y()*sinf(angle),B.get_y()*cosf(angle)+B.get_x()*sinf(angle));
+    A = Point(A.get_x()*cosf(angle)-A.get_y()*sinf(angle),A.get_y()*cosf(angle)+A.get_x()*sinf(angle));
     //}
     translate(mid_point.get_x(),mid_point.get_y());
+}
+
+void Line::central_sym(Point c_sym){
+    A.central_sym(c_sym);
+    B.central_sym(c_sym);
 }
 
 Point Line::milieu_segment() const{

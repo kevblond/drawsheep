@@ -33,6 +33,12 @@ Point& Point::operator*= (float s) {
 }
 
 
+Point& Point::central_sym(Point c_sym){
+    x = -fabsf(c_sym.get_x() - x);
+    y = -fabsf(c_sym.get_y() - y);
+    return *this;
+}
+
 std::ostream & operator<< (std::ostream & os, const Point & p)
 {
     os << '(' << p.x << ',' << p.y << ')';

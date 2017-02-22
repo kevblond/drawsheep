@@ -23,6 +23,7 @@ float Ellipse::perimeter() const{
 float Ellipse::area() const{
     return M_PI*rayA*rayB;
 }
+
 float Ellipse::dist_origin() const{
     Point origin;
     float x0 = center.get_x();
@@ -89,4 +90,7 @@ void Ellipse::rotate(float ang){
     angle += ang;
 }
 
+void Ellipse::central_sym(Point c_sym){
+    center.central_sym(c_sym);
+}
 
