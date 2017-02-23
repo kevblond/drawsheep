@@ -41,12 +41,14 @@ int main(int argc, char **argv) {
     Point o1(10,10);
     Point o2(11,9);
     p.axial_sym(o1,o2);
+    std::cout << pol.gravity_center() << std::endl;
     pol.axial_sym(o1,o2);
     l.axial_sym(o1,o2);
     e.axial_sym(o1,o2);
-    std::cout << p << std::endl;
+//    std::cout << p << std::endl;
     std::cout << pol.gravity_center() << std::endl;
-    std::cout << l.milieu_segment() << std::endl;
+//    std::cout << l.milieu_segment() << std::endl;
 
-    return app.exec();
+//    return app.exec();
+    return 0;
 }

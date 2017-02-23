@@ -92,15 +92,21 @@ void Polygon::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     }
 }
 
-//ne fonctionne pas avec les coordonnée négative
+//ne fonctionne pas
 Point Polygon::gravity_center() const{
     float xg = 0;
     float yg = 0;
+    float s1 = 0;
+    float s2 = 0;
+    float s3 = 0;
+    float s4 = 0;
     for(unsigned int i = 0 ; i < vertices.size() - 1 ; i++){
-        xg += (vertices[i].get_x() + vertices[i+1].get_x()) * (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y());
-        yg += (vertices[i].get_y() + vertices[i+1].get_y()) * (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y());
+        s1 += ((vertices[i].get_x() + vertices[i+1].get_x()) * (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y()));
+        s2 += ((vertices[i].get_y() + vertices[i+1].get_y()) * (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y()));
+        s3 += (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y());
+        s4 += (vertices[i].get_x()*vertices[i+1].get_y() - vertices[i+1].get_x()*vertices[i].get_y());
     }
-    xg *= 1/(6*area());
-    yg *= 1/(6*area());
+    xg = s1 / (3 * s3);
+    yg = s2 / (3 * s4);
     return Point(xg,yg);
 }
