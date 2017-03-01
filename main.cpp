@@ -6,24 +6,42 @@
 #include <QPushButton>
 #include <Line.hpp>
 #include <Window.hpp>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 // TODO Faire des tests unitaires, rapporte des points dans le rapport
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
 
-    QWidget fenetre;
-    fenetre.setFixedSize(1500,900);
-    QPushButton drawing("Quittez",&fenetre);
-
-    drawing.setToolTip("ce message s'affiche quand on passe la souris sur le drawing");
-    drawing.setFixedSize(100, 100);
+//    QPushButton drawing("Quittez",&fenetre);
+//
+//    drawing.setToolTip("ce message s'affiche quand on passe la souris sur le drawing");
+//    drawing.setFixedSize(100, 100);
 //    la souris montre que le bouton est cliquable
-    drawing.setCursor(Qt::PointingHandCursor);
+//    drawing.setCursor(Qt::PointingHandCursor);
 //    quand on clique sur le bouton on quitte l'appli
-    QObject::connect(&drawing,SIGNAL(clicked()),qApp,SLOT(quit()));
+//    QObject::connect(&drawing,SIGNAL(clicked()),qApp,SLOT(quit()));
+//    QObject::connect(&fenetre,SIGNAL(clicked()),qApp,SLOT(create_point()));
 
-    fenetre.show();
+    QGraphicsScene scene;
+    //line
+    scene.addLine(QLineF(10,10,1400,700));
+    //ellipse
+    scene.addEllipse(500,500,50,100);
+    //circle
+    scene.addEllipse(700,700,50,50);
+    //polygone
+    QVector<QPointF> v;
+    v.push_back(QPointF(120,30));
+    v.push_back(QPointF(50,80));
+    v.push_back(QPointF(0,20));
+    v.push_back(QPointF(20,0));
+    scene.addPolygon(QPolygonF(v));
+    QGraphicsView view(&scene);
+
+    view.setFixedSize(1400,900);
+    view.show();
 
 //    Window fenetre;
 //    fenetre.show();
