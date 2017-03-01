@@ -4,19 +4,33 @@
 
 #ifndef DRAWSHEEP_WINDOW_HPP
 #define DRAWSHEEP_WINDOW_HPP
+#include <iostream>
+#include <Shape.hpp>
+#include <Ellipse.hpp>
+#include <Circle.hpp>
+#include <Polygon.hpp>
+#include <Line.hpp>
+#include <QMainWindow>
+#include <QApplication>
+#include <QPushButton>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QMouseEvent>
 
-class Window : public QWidget
+class Window : public QMainWindow
 {
-//    Q_OBJECT
 
 public:
     Window();
+    ~Window();
 
-//public slots:
-//    void test_quit();
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
+    std::vector<Point> queue_point;
     QPushButton *m_button_quit;
+    int type_figure = 0;
+    std::vector<Shape *> list_figure;
 };
 
 #endif //DRAWSHEEP_WINDOW_HPP

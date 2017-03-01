@@ -2,12 +2,14 @@
 #include <Shape.hpp>
 #include <Ellipse.hpp>
 #include <Polygon.hpp>
-#include <QApplication>
-#include <QPushButton>
 #include <Line.hpp>
 #include <Window.hpp>
+#include <QApplication>
+#include <QPushButton>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QMouseEvent>
+#include <QMainWindow>
 
 // TODO Faire des tests unitaires, rapporte des points dans le rapport
 
@@ -24,6 +26,7 @@ int main(int argc, char **argv) {
 //    QObject::connect(&drawing,SIGNAL(clicked()),qApp,SLOT(quit()));
 //    QObject::connect(&fenetre,SIGNAL(clicked()),qApp,SLOT(create_point()));
 
+    Window *window = new Window();
     QGraphicsScene scene;
     //line
     scene.addLine(QLineF(10,10,1400,700));
@@ -38,10 +41,10 @@ int main(int argc, char **argv) {
     v.push_back(QPointF(0,20));
     v.push_back(QPointF(20,0));
     scene.addPolygon(QPolygonF(v));
-    QGraphicsView view(&scene);
+    scene.mouseGrabberItem();
 
-    view.setFixedSize(1400,900);
-    view.show();
+    QGraphicsView view(&scene,window);
+    window->show();
 
 //    Window fenetre;
 //    fenetre.show();
@@ -71,12 +74,12 @@ int main(int argc, char **argv) {
     Point o1(10,10);
     Point o2(11,9);
     p.axial_sym(o1,o2);
-    std::cout << pol.gravity_center() << std::endl;
+//    std::cout << pol.gravity_center() << std::endl;
     pol.axial_sym(o1,o2);
     l.axial_sym(o1,o2);
     e.axial_sym(o1,o2);
 //    std::cout << p << std::endl;
-    std::cout << pol.gravity_center() << std::endl;
+//    std::cout << pol.gravity_center() << std::endl;
 //    std::cout << l.milieu_segment() << std::endl;
 
     return app.exec();
