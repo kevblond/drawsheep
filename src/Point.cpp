@@ -34,6 +34,15 @@ Point& Point::operator*= (float s) {
     return *this;
 }
 
+Point Point::operator+ (const Point& b) const{
+    return Point(x+b.x,y+b.y);
+}
+
+
+Point Point::operator* (float t) const{
+    return Point(t*x,t*y);
+}
+
 
 Point& Point::central_sym(Point c_sym){
     x = c_sym.get_x() - (x-c_sym.get_x());

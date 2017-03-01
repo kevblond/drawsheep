@@ -5,16 +5,28 @@
 #include <QApplication>
 #include <QPushButton>
 #include <Line.hpp>
+#include <Window.hpp>
 
 // TODO Faire des tests unitaires, rapporte des points dans le rapport
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
 
-    QPushButton drawing("Hello world!");
+    QWidget fenetre;
+    fenetre.setFixedSize(1500,900);
+    QPushButton drawing("Quittez",&fenetre);
 
-    drawing.setFixedSize(1500, 900);
-//    drawing.show();
+    drawing.setToolTip("ce message s'affiche quand on passe la souris sur le drawing");
+    drawing.setFixedSize(100, 100);
+//    la souris montre que le bouton est cliquable
+    drawing.setCursor(Qt::PointingHandCursor);
+//    quand on clique sur le bouton on quitte l'appli
+    QObject::connect(&drawing,SIGNAL(clicked()),qApp,SLOT(quit()));
+
+    fenetre.show();
+
+//    Window fenetre;
+//    fenetre.show();
 
     Point p(3,3);
 
@@ -49,6 +61,6 @@ int main(int argc, char **argv) {
     std::cout << pol.gravity_center() << std::endl;
 //    std::cout << l.milieu_segment() << std::endl;
 
-//    return app.exec();
-    return 0;
+    return app.exec();
+//    return 0;
 }
