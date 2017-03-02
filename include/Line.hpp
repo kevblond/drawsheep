@@ -5,10 +5,10 @@
 #ifndef DRAWSHEEP_LINE_HPP
 #define DRAWSHEEP_LINE_HPP
 #include <Point.hpp>
-#include <Shape.hpp>
+#include <My_Shape.hpp>
 
 
-class Line : public Shape {
+class Line : public My_Shape {
 private:
     Point A;
     Point B;

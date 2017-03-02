@@ -5,10 +5,10 @@
 #ifndef DRAWSHEEP_CIRCLE_HPP
 #define DRAWSHEEP_CIRCLE_HPP
 #include<Point.hpp>
-#include<Shape.hpp>
+#include <My_Shape.hpp>
 #include<cmath>
 
-class Circle : public Shape {
+class Circle : public My_Shape {
 private:
     Point center;
     float ray;

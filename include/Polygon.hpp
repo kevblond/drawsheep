@@ -4,11 +4,11 @@
 
 #ifndef DRAWSHEEP_POLYGON_HPP
 #define DRAWSHEEP_POLYGON_HPP
-#include <Shape.hpp>
+#include <My_Shape.hpp>
 #include <vector>
 
 
-class Polygon : public Shape {
+class Polygon : public My_Shape {
 private:
     std::vector<Point> vertices;
 public:

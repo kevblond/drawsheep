@@ -5,19 +5,17 @@
 #ifndef DRAWSHEEP_WINDOW_HPP
 #define DRAWSHEEP_WINDOW_HPP
 #include <iostream>
-#include <Shape.hpp>
+#include <My_Shape.hpp>
 #include <Ellipse.hpp>
 #include <Circle.hpp>
 #include <Polygon.hpp>
 #include <Line.hpp>
-#include <QMainWindow>
-#include <QApplication>
 #include <QPushButton>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMouseEvent>
 
-class Window : public QMainWindow
+class Window : public QGraphicsView
 {
 
 public:
@@ -27,10 +25,12 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
 
 private:
+    QGraphicsScene *scene;
+
     std::vector<Point> queue_point;
+    std::vector<My_Shape *> list_figure;
     QPushButton *m_button_quit;
     int type_figure = 0;
-    std::vector<Shape *> list_figure;
 };
 
 #endif //DRAWSHEEP_WINDOW_HPP

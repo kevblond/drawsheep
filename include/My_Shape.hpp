@@ -7,7 +7,7 @@
 #include<iostream>
 #include<Point.hpp>
 
-class Shape{
+class My_Shape{
 private:
     //mat3 matrix = matrice identité
     //utilisé pour les rotate translate etc...
@@ -16,7 +16,7 @@ public:
     virtual float area() const = 0;
     virtual float perimeter() const = 0;
     virtual float dist_origin() const = 0;
-    virtual ~Shape(){};
+    virtual ~My_Shape(){};
     virtual void rotate(float) = 0;
     virtual void translate(float, float) = 0;
     virtual void scale(float) = 0;

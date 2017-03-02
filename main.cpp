@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Shape.hpp>
+#include <My_Shape.hpp>
 #include <Ellipse.hpp>
 #include <Polygon.hpp>
 #include <Line.hpp>
@@ -16,38 +16,27 @@
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
 
-//    QPushButton drawing("Quittez",&fenetre);
-//
-//    drawing.setToolTip("ce message s'affiche quand on passe la souris sur le drawing");
-//    drawing.setFixedSize(100, 100);
-//    la souris montre que le bouton est cliquable
-//    drawing.setCursor(Qt::PointingHandCursor);
-//    quand on clique sur le bouton on quitte l'appli
-//    QObject::connect(&drawing,SIGNAL(clicked()),qApp,SLOT(quit()));
-//    QObject::connect(&fenetre,SIGNAL(clicked()),qApp,SLOT(create_point()));
-
     Window *window = new Window();
-    QGraphicsScene scene;
-    //line
-    scene.addLine(QLineF(10,10,1400,700));
-    //ellipse
-    scene.addEllipse(500,500,50,100);
-    //circle
-    scene.addEllipse(700,700,50,50);
-    //polygone
-    QVector<QPointF> v;
-    v.push_back(QPointF(120,30));
-    v.push_back(QPointF(50,80));
-    v.push_back(QPointF(0,20));
-    v.push_back(QPointF(20,0));
-    scene.addPolygon(QPolygonF(v));
-    scene.mouseGrabberItem();
-
-    QGraphicsView view(&scene,window);
     window->show();
 
-//    Window fenetre;
-//    fenetre.show();
+
+//    QGraphicsScene scene;
+//    QGraphicsView view(&scene,window);
+//    //line
+//    scene.addLine(QLineF(10,10,1400,700));
+//    //ellipse
+//    scene.addEllipse(500,500,50,100);
+//    //circle
+//    scene.addEllipse(700,700,50,50);
+//    //polygone
+//    QVector<QPointF> v;
+//    v.push_back(QPointF(120,30));
+//    v.push_back(QPointF(50,80));
+//    v.push_back(QPointF(0,20));
+//    v.push_back(QPointF(20,0));
+//    scene.addPolygon(QPolygonF(v));
+//    scene.mouseGrabberItem();
+
 
     Point p(3,3);
 

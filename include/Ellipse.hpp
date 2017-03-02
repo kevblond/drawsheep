@@ -5,11 +5,11 @@
 #ifndef DRAWSHEEP_ELLIPSE_HPP
 #define DRAWSHEEP_ELLIPSE_HPP
 #include<Point.hpp>
-#include <Shape.hpp>
+#include <My_Shape.hpp>
 #include <cmath>
 
 
-class Ellipse : public Shape{
+class Ellipse : public My_Shape{
 private:
     Point center;
     float rayA;
