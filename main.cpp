@@ -19,25 +19,6 @@ int main(int argc, char **argv) {
     Window *window = new Window();
     window->show();
 
-
-//    QGraphicsScene scene;
-//    QGraphicsView view(&scene,window);
-//    //line
-//    scene.addLine(QLineF(10,10,1400,700));
-//    //ellipse
-//    scene.addEllipse(500,500,50,100);
-//    //circle
-//    scene.addEllipse(700,700,50,50);
-//    //polygone
-//    QVector<QPointF> v;
-//    v.push_back(QPointF(120,30));
-//    v.push_back(QPointF(50,80));
-//    v.push_back(QPointF(0,20));
-//    v.push_back(QPointF(20,0));
-//    scene.addPolygon(QPolygonF(v));
-//    scene.mouseGrabberItem();
-
-
     Point p(3,3);
 
     Line l(Point(0,2),Point(2,0));
