@@ -76,6 +76,7 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
                 float OTX = fabsf(actual_x - tmp_point.get_x());
                 float OTY = fabsf(actual_y - tmp_point.get_y());
                 Point tmp = tmp_point;
+                //4 direction de la souris entre press et release
                 if(tmp_point.get_x() < actual_x){
                     if(tmp_point.get_y() < actual_y){
                         //bas à droite
@@ -113,6 +114,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
 
     if(event->button() == Qt::LeftButton){
         queue_point.push_back(Point(event->pos().x(),event->pos().y()));
+
         //affichage du point
         //scene->addLine(event->pos().x(),event->pos().y(),event->pos().x(),event->pos().y());
         //std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
@@ -148,29 +150,29 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 Point T = queue_point[1];
                 float OTX = fabsf(T.get_x() - O.get_x());
                 float OTY = fabsf(T.get_y() - O.get_y());
+                //4 direction de la souris entre press et release
                 if(O.get_x() < T.get_x()){
                     if(O.get_y() < T.get_y()){
-                        //haut à droite
-                        O = Point(O.get_x(), O.get_y() - OTY);
-                    }
-//                    else{
                         //bas à droite
                         //comportement normal donc vide
-//                    }
+                    }
+                    else{
+                    //haut à droite
+                    O = Point(O.get_x(), O.get_y() - OTY);
+                    }
                 }
                 else{
                     if(O.get_y() < T.get_y()){
-                        //haut à gauche
-                        O = Point(O.get_x() - OTX, O.get_y() - OTY);
-                    }
-                    else{
                         //bas à gauche
                         O = Point(O.get_x() - OTX, O.get_y());
+                    }
+                    else{
+                        //haut à gauche
+                        O = Point(O.get_x() - OTX, O.get_y() - OTY);
                     }
                 }
                 Point center(O.get_x()+OTX/2,O.get_y()+OTY/2);
                 list_figure.push_back(new Ellipse(center,fabsf(OTX),fabsf(OTY)));
-
                 scene->addEllipse(O.get_x(),O.get_y(),fabsf(OTX),fabsf(OTY));
 
                 queue_point.clear();
