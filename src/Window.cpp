@@ -148,8 +148,6 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
 
                     }
                 }
-                float OTX = T.get_x() - O.get_x();
-                float OTY = T.get_y() - O.get_y();
                 Point center(O.get_x()+OTX/2,O.get_y()+OTY/2);
                 list_figure.push_back(new Ellipse(center,fabsf(OTX),fabsf(OTY)));
 
