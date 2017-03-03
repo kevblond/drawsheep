@@ -20,9 +20,10 @@
 
 class Window : public QGraphicsView
 {
-//    Q_OBJECT
-//public slot:
-//    void testQuit();
+    Q_OBJECT
+public slots:
+    void testQuit();
+
 public:
     Window();
     ~Window();

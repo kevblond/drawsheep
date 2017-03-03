@@ -21,14 +21,14 @@ Window::Window(){
 //    la souris montre que le bouton est cliquable
     m_button_quit->setCursor(Qt::PointingHandCursor);
 //    quand on clique sur le bouton on quitte l'appli
-    QObject::connect(m_button_quit,SIGNAL(clicked()),qApp,SLOT(testQuit()));
+    QObject::connect(m_button_quit,SIGNAL(clicked()),this,SLOT(testQuit()));
 }
 
 Window::~Window(){}
 
-//void Window::testQuit() {
-//    exit(EXIT_SUCCESS);
-//}
+void Window::testQuit() {
+    exit(EXIT_SUCCESS);
+}
 
 void Window::button_line() {
     type_figure = 0;
