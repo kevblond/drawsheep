@@ -10,6 +10,7 @@
 #include <Circle.hpp>
 #include <Polygon.hpp>
 #include <Line.hpp>
+#include <QApplication>
 #include <QPushButton>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -18,7 +19,9 @@
 
 class Window : public QGraphicsView
 {
-
+//    Q_OBJECT
+//public slot:
+//    void testQuit();
 public:
     Window();
     ~Window();
@@ -29,16 +32,14 @@ public:
 
 private:
     QGraphicsScene *scene;
-
     std::vector<Point> queue_point;
     std::vector<My_Shape *> list_figure;
     Point tmp_point;
-    QGraphicsLineItem *tmp_ligne = nullptr;
+    QGraphicsLineItem *tmp_line = nullptr;
     QGraphicsEllipseItem *tmp_ellipse = nullptr;
     QPushButton *m_button_quit;
     int type_figure = 1;
     bool figure_on_creation = false;
-
 };
 
 #endif //DRAWSHEEP_WINDOW_HPP

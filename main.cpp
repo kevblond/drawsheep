@@ -4,12 +4,6 @@
 #include <Polygon.hpp>
 #include <Line.hpp>
 #include <Window.hpp>
-#include <QApplication>
-#include <QPushButton>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QMouseEvent>
-#include <QMainWindow>
 
 // TODO Faire des tests unitaires, rapporte des points dans le rapport
 

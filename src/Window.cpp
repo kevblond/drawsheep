@@ -15,21 +15,20 @@ Window::Window(){
     QLineF line(0,0,1500,900);
     scene->addLine(line,pen);
 
-//    m_button_quit = new QPushButton("Quittez",this);
-//    m_button_quit->setToolTip("quittez l'application");
-//    m_button_quit->setFixedSize(100, 100);
-////    la souris montre que le bouton est cliquable
-//    m_button_quit->setCursor(Qt::PointingHandCursor);
-////    quand on clique sur le bouton on quitte l'appli
-//    QObject::connect(m_button_quit,SIGNAL(clicked()),qApp,SLOT(quit()));
+    m_button_quit = new QPushButton("Quittez",this);
+    m_button_quit->setToolTip("quittez l'application");
+    m_button_quit->setFixedSize(100, 25);
+//    la souris montre que le bouton est cliquable
+    m_button_quit->setCursor(Qt::PointingHandCursor);
+//    quand on clique sur le bouton on quitte l'appli
+    QObject::connect(m_button_quit,SIGNAL(clicked()),qApp,SLOT(testQuit()));
 }
 
-Window::~Window(){
+Window::~Window(){}
 
-}
-
-//creation mousePushEvent qui permet a mouseMooveEvent de s'appliquer
-//mouseMooveEvent redessine la derniere figure lancé a chaque mouvement
+//void Window::testQuit() {
+//    exit(EXIT_SUCCESS);
+//}
 
 //permet d'appliquer la fonction mooveEvent quand la souris bouge
 //et créer un prototype de la figure jusquau relachement de la souris
@@ -43,8 +42,8 @@ void Window::mousePressEvent(QMouseEvent *event) {
         case 0:
             //line
             std::cout << "create line " << std::endl;
-            tmp_ligne = new QGraphicsLineItem(QLineF(QPointF(actual_x,actual_y),QPointF(actual_x,actual_y)));
-            scene->addItem(tmp_ligne);
+            tmp_line = new QGraphicsLineItem(QLineF(QPointF(actual_x,actual_y),QPointF(actual_x,actual_y)));
+            scene->addItem(tmp_line);
             break;
         case 1:
             //ellipse
@@ -57,7 +56,7 @@ void Window::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-//modifie le prototype de la figure jusquau relachement de la souris
+//modifie le prototype de la figure jusqu'au relachement de la souris
 void Window::mouseMoveEvent(QMouseEvent *event) {
     if(figure_on_creation){
         int actual_x = event->pos().x();
@@ -65,15 +64,16 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
         switch(type_figure) {
             case 0:
                 //line
-                scene->removeItem(tmp_ligne);
-                tmp_ligne = new QGraphicsLineItem(QLineF(QPointF(tmp_point.get_x(),tmp_point.get_y()),QPointF(actual_x,actual_y)));
-                scene->addItem(tmp_ligne);
+                scene->removeItem(tmp_line);
+                tmp_line = new QGraphicsLineItem(QLineF(QPointF(tmp_point.get_x(),tmp_point.get_y()),QPointF(actual_x,actual_y)));
+                scene->addItem(tmp_line);
                 break;
             case 1:
             {
+                //ellipse
+                //decoupé en 4 la creation de lellipse
                 float OTX = actual_x - tmp_point.get_x();
                 float OTY = actual_y - tmp_point.get_y();
-                //ellipse
                 scene->removeItem(tmp_ellipse);
                 tmp_ellipse = new QGraphicsEllipseItem(tmp_point.get_x(),tmp_point.get_y(),OTX,OTY);
                 scene->addItem(tmp_ellipse);
@@ -85,7 +85,7 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-
+//créer la forme dessiné
 void Window::mouseReleaseEvent(QMouseEvent *event){
 
     figure_on_creation = false;
@@ -100,8 +100,8 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
             case 0:
             {
                 //line
-                scene->removeItem(tmp_ligne);
-                tmp_ligne = nullptr;
+                scene->removeItem(tmp_line);
+                tmp_line = nullptr;
                 std::cout << "create line "<< std::endl;
                 Point A = queue_point[0];
                 Point B = queue_point[1];
@@ -119,11 +119,35 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
             case 1:
             {
                 //ellipse
+                //decoupé en 4 la creation de lellipse
                 scene->removeItem(tmp_ellipse);
                 tmp_ellipse = nullptr;
                 std::cout << "create ellipse " << std::endl;
                 Point O = queue_point[0];
                 Point T = queue_point[1];
+                float OTX = T.get_x() - O.get_x();
+                float OTY = T.get_y() - O.get_y();
+                if(O.get_x() < T.get_x()){
+                    if(O.get_y() < T.get_y()){
+                        //haut à droite
+                        T = Point(T.get_x(),T.get_y()+OTY);
+                        O = Point(O.get_x(),O.get_y()+OTY);
+                    }
+//                    else{
+                        //bas à droite
+                        //comportement normal donc vide
+//                    }
+                }
+                else{
+                    if(O.get_y() < T.get_y()){
+                        //haut à gauche
+
+                    }
+                    else{
+                        //bas à gauche
+
+                    }
+                }
                 float OTX = T.get_x() - O.get_x();
                 float OTY = T.get_y() - O.get_y();
                 Point center(O.get_x()+OTX/2,O.get_y()+OTY/2);
