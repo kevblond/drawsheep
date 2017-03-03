@@ -16,6 +16,7 @@
 #include <QGraphicsView>
 #include <QMouseEvent>
 #include <QGraphicsLineItem>
+#include <QObject>
 
 class Window : public QGraphicsView
 {

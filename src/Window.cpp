@@ -72,10 +72,31 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
             {
                 //ellipse
                 //decoupé en 4 la creation de lellipse
-                float OTX = actual_x - tmp_point.get_x();
-                float OTY = actual_y - tmp_point.get_y();
                 scene->removeItem(tmp_ellipse);
-                tmp_ellipse = new QGraphicsEllipseItem(tmp_point.get_x(),tmp_point.get_y(),OTX,OTY);
+                float OTX = fabsf(actual_x - tmp_point.get_x());
+                float OTY = fabsf(actual_y - tmp_point.get_y());
+                Point tmp = tmp_point;
+                if(tmp_point.get_x() < actual_x){
+                    if(tmp_point.get_y() < actual_y){
+                        //bas à droite
+                        //comportement normal donc vide
+                    }
+                    else{
+                    //haut à droite
+                    tmp = Point(tmp_point.get_x(), tmp_point.get_y() - OTY);
+                    }
+                }
+                else{
+                    if(tmp_point.get_y() < actual_y){
+                        //bas à gauche
+                        tmp = Point(tmp_point.get_x() - OTX, tmp_point.get_y());
+                    }
+                    else{
+                        //haut à gauche
+                        tmp = Point(tmp_point.get_x() - OTX, tmp_point.get_y() - OTY);
+                    }
+                }
+                tmp_ellipse = new QGraphicsEllipseItem(tmp.get_x(),tmp.get_y(),OTX,OTY);
                 scene->addItem(tmp_ellipse);
                 break;
             }
@@ -125,13 +146,12 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 std::cout << "create ellipse " << std::endl;
                 Point O = queue_point[0];
                 Point T = queue_point[1];
-                float OTX = T.get_x() - O.get_x();
-                float OTY = T.get_y() - O.get_y();
+                float OTX = fabsf(T.get_x() - O.get_x());
+                float OTY = fabsf(T.get_y() - O.get_y());
                 if(O.get_x() < T.get_x()){
                     if(O.get_y() < T.get_y()){
                         //haut à droite
-                        T = Point(T.get_x(),T.get_y()+OTY);
-                        O = Point(O.get_x(),O.get_y()+OTY);
+                        O = Point(O.get_x(), O.get_y() - OTY);
                     }
 //                    else{
                         //bas à droite
@@ -141,11 +161,11 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 else{
                     if(O.get_y() < T.get_y()){
                         //haut à gauche
-
+                        O = Point(O.get_x() - OTX, O.get_y() - OTY);
                     }
                     else{
                         //bas à gauche
-
+                        O = Point(O.get_x() - OTX, O.get_y());
                     }
                 }
                 Point center(O.get_x()+OTX/2,O.get_y()+OTY/2);
