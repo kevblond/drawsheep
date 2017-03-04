@@ -26,6 +26,14 @@ public slots:
     void button_ellipse();
     void button_polygon();
     void button_fin_polygon();
+    void button_selection();
+    void button_color_background();
+    void button_color_contour();
+    void button_move();
+    void button_scale();
+    void button_rotate();
+    void button_axial_sym();
+    void button_central_sym();
 
 public:
     Window();
@@ -34,7 +42,8 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
-    void button_selection();
+    void enable_buttons();
+    void disable_buttons();
 
 
 private:
@@ -48,14 +57,23 @@ private:
     QGraphicsEllipseItem *tmp_ellipse = nullptr;
     QGraphicsPolygonItem *tmp_polygon = nullptr;
     std::vector<QGraphicsLineItem *> list_line_polygon;
+    QGraphicsItem *tmp_item_modified = nullptr;
 
     QPushButton *m_button_quit;
     QPushButton *m_button_line;
     QPushButton *m_button_ellipse;
     QPushButton *m_button_polygon;
     QPushButton *m_button_fin_polygon;
+    QPushButton *m_button_selection;
+    QPushButton *m_button_color_background;
+    QPushButton *m_button_color_contour;
+    QPushButton *m_button_move;
+    QPushButton *m_button_scale;
+    QPushButton *m_button_rotate;
+    QPushButton *m_button_axial_sym;
+    QPushButton *m_button_central_sym;
 
-    int type_figure = 2;
+    int type_button = 0;
     bool figure_on_creation = false;
 };
 
