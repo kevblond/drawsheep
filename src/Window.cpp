@@ -16,25 +16,57 @@ Window::Window(){
     scene->addLine(line,pen);
 
     m_button_quit = new QPushButton("Quittez",this);
+    m_button_line = new QPushButton("Ligne",this);
+    m_button_ellipse = new QPushButton("Ellipse",this);
+    m_button_polygon = new QPushButton("Polygone",this);
+    m_button_fin_polygon = new QPushButton("Fin Polygone",this);
+
     m_button_quit->setToolTip("quittez l'application");
+    m_button_line->setToolTip("créer une ligne");
+    m_button_ellipse->setToolTip("créer une ellipse");
+    m_button_polygon->setToolTip("créer un polygone");
+    m_button_fin_polygon->setToolTip("mettre fin à l'ajout de point pour la création du polygone");
+
     m_button_quit->setFixedSize(100, 25);
+    m_button_line->setFixedSize(100, 25);
+    m_button_ellipse->setFixedSize(100, 25);
+    m_button_polygon->setFixedSize(100, 25);
+    m_button_fin_polygon->setFixedSize(100, 25);
+
+    m_button_line->move(0,25);
+    m_button_ellipse->move(0,50);
+    m_button_polygon->move(0,75);
+    m_button_fin_polygon->move(0,100);
+
 //    la souris montre que le bouton est cliquable
     m_button_quit->setCursor(Qt::PointingHandCursor);
+    m_button_line->setCursor(Qt::PointingHandCursor);
+    m_button_ellipse->setCursor(Qt::PointingHandCursor);
+    m_button_polygon->setCursor(Qt::PointingHandCursor);
+    m_button_fin_polygon->setCursor(Qt::PointingHandCursor);
+
 //    quand on clique sur le bouton on quitte l'appli
-    QObject::connect(m_button_quit,SIGNAL(clicked()),this,SLOT(testQuit()));
+    QObject::connect(m_button_quit,SIGNAL(clicked()),qApp,SLOT(quit()));
+    QObject::connect(m_button_line,SIGNAL(clicked()),this,SLOT(button_line()));
+    QObject::connect(m_button_ellipse,SIGNAL(clicked()),this,SLOT(button_ellipse()));
+    QObject::connect(m_button_polygon,SIGNAL(clicked()),this,SLOT(button_polygon()));
+    QObject::connect(m_button_fin_polygon,SIGNAL(clicked()),this,SLOT(button_fin_polygon()));
+
 }
 
 Window::~Window(){}
 
-void Window::testQuit() {
-    exit(EXIT_SUCCESS);
-}
-
 void Window::button_line() {
+    if(type_figure == 2){
+        button_fin_polygon();
+    }
     type_figure = 0;
 }
 
 void Window::button_ellipse() {
+    if(type_figure == 2){
+        button_fin_polygon();
+    }
     type_figure = 1;
 }
 
@@ -61,7 +93,6 @@ void Window::button_fin_polygon() {
 //permet d'appliquer la fonction mooveEvent quand la souris bouge
 //et créer un prototype de la figure jusquau relachement de la souris
 void Window::mousePressEvent(QMouseEvent *event) {
-    //peut etre empeché le press si lemplacement se trouve sur les boutons
     figure_on_creation = true;
     int actual_x = event->pos().x();
     int actual_y = event->pos().y();
@@ -242,9 +273,6 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 tmp_line = nullptr;
 
                 tmp_point = Point(event->pos().x(),event->pos().y());
-//                if(queue_point.size() == 5){
-//                    button_fin_polygon();
-//                }
                 break;
             }
             default:
