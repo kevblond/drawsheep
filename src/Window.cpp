@@ -16,6 +16,9 @@ Window::Window(){
     QLineF line(0,0,1500,900);
     scene->addLine(line,pen);
 
+    tmp_item_modified.first = nullptr;
+    tmp_item_modified.second = nullptr;
+
     m_button_quit = new QPushButton("Quittez",this);
     m_button_selection = new QPushButton("Selection",this);
     m_button_line = new QPushButton("Ligne",this);
@@ -86,7 +89,6 @@ Window::Window(){
     m_button_axial_sym->setCursor(Qt::PointingHandCursor);
     m_button_central_sym->setCursor(Qt::PointingHandCursor);
 
-
     //les buttons n'apparaisse que si l'on a selectionner une figure
     disable_buttons();
 
@@ -129,83 +131,140 @@ void Window::disable_buttons() {
     m_button_central_sym->setDisabled(true);
 }
 
-void Window::button_selection() {
+void Window::clear_action(){
     disable_buttons();
-    if(type_button == 2){
+    if(type_button == 5){
         button_fin_polygon();
     }
+    type_item_modified = -1;
+    tmp_line = nullptr;
+    list_line_polygon.clear();
+    queue_point.clear();
+}
+
+
+void Window::button_selection() {
+    clear_action();
     type_button = 3;
 }
 
 void Window::button_line() {
-    disable_buttons();
-    if(type_button == 2){
-        button_fin_polygon();
-    }
-    type_button = 0;
+    clear_action();
+    type_button = 6;
 }
 
 void Window::button_ellipse() {
-    disable_buttons();
-    if(type_button == 2){
-        button_fin_polygon();
-    }
-    type_button = 1;
+    clear_action();
+    type_button = 4;
 }
 
 void Window::button_polygon() {
-    disable_buttons();
-    type_button = 2;
+    clear_action();
+    type_button = 5;
 }
 
 //supprime les lignes affichées temporairement et créer le polygon final.
 void Window::button_fin_polygon() {
-    QVector<QPointF> v;
-    for(Point p:queue_point){
-        v.push_back(QPointF(p.get_x(),p.get_y()));
+    //si le polygone en cours de création n'a que 2 point on ne peux pas finir ce polygone
+    if(queue_point.size() >= 3){
+        QVector<QPointF> v;
+        std::vector<Point> v2;
+        for(Point p:queue_point){
+            std::cout << Point(p.get_x(),p.get_y());
+            v.push_back(QPointF(p.get_x(),p.get_y()));
+            v2.push_back(Point(p.get_x(),p.get_y()));
+        }
+        QPolygonF pol = QPolygonF(v);
+        QGraphicsPolygonItem *polygon = new QGraphicsPolygonItem(pol);
+        scene->addItem(polygon);
+
+        std::pair<My_Shape *,QGraphicsItem *> p;
+        p.first = new Polygon(v2);
+        p.second = polygon;
+        list_figure.push_back(p);
     }
-    QPolygonF pol = QPolygonF(v);
+
+    //clean
     for(QGraphicsLineItem *line : list_line_polygon){
         scene->removeItem(line);
     }
-    scene->addPolygon(pol);
     tmp_line = nullptr;
     list_line_polygon.clear();
     queue_point.clear();
 }
 
 void Window::button_color_background() {
-    QColor color = QColorDialog::getColor(Qt::white,this);
-    QPalette pal;
-    pal.setColor(QPalette::Background,color);
+    QPen pen;
+    QColor color_background = QColorDialog::getColor(Qt::white,this);
+    switch(type_item_modified){
+        case 6:
+            //line
+            //pas de remplissage d'une ligne
+            break;
+        case 4:
+            //ellipse
+            tmp_ellipse->setBrush(QBrush(color_background));
+            break;
+        case 5:
+            //polygon
+            tmp_polygon->setBrush(QBrush(color_background));
+            break;
+        default:
+            break;
+    }
     //modif tmpitem background
 }
 
 void Window::button_color_contour() {
-    QColor color = QColorDialog::getColor(Qt::white,this);
-    QPalette pal;
-    pal.setColor(QPalette::Background,color);
-    //modif tmpitem contour
+    QColor color_contour = QColorDialog::getColor(Qt::white,this);
+    QPen pen;
+
+    pen.setBrush(Qt::NoBrush);
+    pen.setColor(color_contour);
+
+    //type lors de la selection
+    switch(type_item_modified){
+        case 6:
+            //line
+            tmp_line->setPen(pen);
+            break;
+        case 4:
+            //ellipse
+            //recup background et donnée, remove ellipse ancienne, créer nouvelle avec modif couleur, tmpEllipse = nouvelle
+            tmp_ellipse->setPen(pen);
+            break;
+        case 5:
+            //polygon
+            tmp_polygon->setPen(pen);
+            break;
+        default:
+            break;
+    }
 }
 
 void Window::button_move() {
-
+    clear_action();
+    type_button = 7;
 }
 
 void Window::button_scale() {
-
+    clear_action();
+    type_button = 8;
 }
 
 void Window::button_rotate() {
-
+    clear_action();
+    type_button = 9;
 }
 
 void Window::button_axial_sym() {
-
+    clear_action();
+    type_button = 10;
 }
 
 void Window::button_central_sym() {
-
+    clear_action();
+    type_button = 11;
 }
 
 //permet d'appliquer la fonction mooveEvent quand la souris bouge
@@ -214,25 +273,58 @@ void Window::mousePressEvent(QMouseEvent *event) {
     figure_on_creation = true;
     int actual_x = event->pos().x();
     int actual_y = event->pos().y();
-    if(type_button != 2 || list_line_polygon.size() == 0){
-        tmp_point = Point(actual_x,actual_y);
-        queue_point.push_back(tmp_point);
-    }
     switch(type_button) {
-        case 0:
+        case 6:
             //line
+            tmp_point = Point(actual_x,actual_y);
+            queue_point.push_back(tmp_point);
             tmp_line = new QGraphicsLineItem(QLineF(QPointF(actual_x,actual_y),QPointF(actual_x,actual_y)));
             scene->addItem(tmp_line);
             break;
-        case 1:
+        case 4:
             //ellipse
+            tmp_point = Point(actual_x,actual_y);
+            queue_point.push_back(tmp_point);
             tmp_ellipse = new QGraphicsEllipseItem(actual_x,actual_y,0,0);
             scene->addItem(tmp_ellipse);
             break;
-        case 2:
+        case 5:
             //polygon
+            if(list_line_polygon.size() == 0){
+                tmp_point = Point(actual_x,actual_y);
+                queue_point.push_back(tmp_point);
+            }
             tmp_line = new QGraphicsLineItem(QLineF(QPointF(tmp_point.get_x(),tmp_point.get_y()),QPointF(actual_x,actual_y)));
             scene->addItem(tmp_line);
+            break;
+        case 7:
+        {
+            //move
+            scene->removeItem(tmp_item_modified.second);
+            float trans_x = actual_x - tmp_point.get_x();
+            float trans_y = actual_y - tmp_point.get_y();
+            tmp_point += Point(trans_x,trans_y);
+            std::cout << trans_x << " " << trans_y << std::endl;
+            tmp_item_modified.first->translate(trans_x,trans_y);
+            tmp_item_modified.second = tmp_item_modified.first->getItem();
+            scene->addItem(tmp_item_modified.second);
+            break;
+        }
+        case 8:
+            //scale
+
+            break;
+        case 9:
+            //rotate
+
+            break;
+        case 10:
+            //axial sym
+
+            break;
+        case 11:
+            //central sym
+
             break;
         default:
             break;
@@ -245,13 +337,13 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
         int actual_x = event->pos().x();
         int actual_y = event->pos().y();
         switch(type_button) {
-            case 0:
+            case 6:
                 //line
                 scene->removeItem(tmp_line);
                 tmp_line = new QGraphicsLineItem(QLineF(QPointF(tmp_point.get_x(),tmp_point.get_y()),QPointF(actual_x,actual_y)));
                 scene->addItem(tmp_line);
                 break;
-            case 1:
+            case 4:
             {
                 //ellipse
                 //decoupé en 4 la creation de lellipse
@@ -284,11 +376,31 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
                 scene->addItem(tmp_ellipse);
                 break;
             }
-            case 2:
+            case 5:
                 //polygon
                 scene->removeItem(tmp_line);
                 tmp_line = new QGraphicsLineItem(QLineF(QPointF(tmp_point.get_x(),tmp_point.get_y()),QPointF(actual_x,actual_y)));
                 scene->addItem(tmp_line);
+                break;
+            case 7:
+                //move
+
+                break;
+            case 8:
+                //scale
+
+                break;
+            case 9:
+                //rotate
+
+                break;
+            case 10:
+                //axial sym
+
+                break;
+            case 11:
+                //central sym
+
                 break;
             default:
                 break;
@@ -302,7 +414,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
     figure_on_creation = false;
 
     if(event->button() == Qt::LeftButton){
-        if(type_button != 2){
+        if(type_button != 5){
             queue_point.push_back(Point(event->pos().x(),event->pos().y()));
         }
 
@@ -311,32 +423,37 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
         //std::cout << event->pos().x() << " " << event->pos().y() << std::endl;
 
         switch(type_button){
-            case 0:
+            case 6:
             {
                 //line
+                std::cout << "create line "<< std::endl;
                 scene->removeItem(tmp_line);
                 tmp_line = nullptr;
-                std::cout << "create line "<< std::endl;
                 Point A = queue_point[0];
                 Point B = queue_point[1];
-                list_figure.push_back(new Line(A,B));
 
                 QPointF Af = mapToScene(static_cast<int>(A.get_x()),static_cast<int>(A.get_y()));
                 QPointF Bf = mapToScene(static_cast<int>(B.get_x()),static_cast<int>(B.get_y()));
 
-                scene->addLine(QLineF(Af,Bf));
+                QGraphicsLineItem *l = new QGraphicsLineItem(QLineF(Af,Bf));
+                scene->addItem(l);
+
+                std::pair<My_Shape *,QGraphicsItem *> p;
+                p.first = new Line(A,B);
+                p.second = l;
+                list_figure.push_back(p);
 
                 queue_point.clear();
                 break;
             }
 
-            case 1:
+            case 4:
             {
                 //ellipse
                 //decoupé en 4 la creation de lellipse
+                std::cout << "create ellipse " << std::endl;
                 scene->removeItem(tmp_ellipse);
                 tmp_ellipse = nullptr;
-                std::cout << "create ellipse " << std::endl;
                 Point O = queue_point[0];
                 Point T = queue_point[1];
                 float OTX = fabsf(T.get_x() - O.get_x());
@@ -363,18 +480,23 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                     }
                 }
                 Point center(O.get_x()+OTX/2,O.get_y()+OTY/2);
-                list_figure.push_back(new Ellipse(center,fabsf(OTX),fabsf(OTY)));
-                scene->addEllipse(O.get_x(),O.get_y(),fabsf(OTX),fabsf(OTY));
+                QGraphicsEllipseItem *e = new QGraphicsEllipseItem(O.get_x(),O.get_y(),fabsf(OTX),fabsf(OTY));
+                scene->addItem(e);
+
+                std::pair<My_Shape *,QGraphicsItem *> p;
+                p.first = new Ellipse(center,fabsf(OTX),fabsf(OTY));
+                p.second = e;
+                list_figure.push_back(p);
 
                 queue_point.clear();
                 break;
             }
 
-            case 2:
+            case 5:
             {
-                //line
+                //polygon
+                std::cout << "create line of polygon "<< std::endl;
                 scene->removeItem(tmp_line);
-                std::cout << "create polygon "<< std::endl;
                 Point A = tmp_point;
                 Point B = Point(event->pos().x(),event->pos().y());
                 queue_point.push_back(B);
@@ -392,15 +514,43 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
             }
             case 3:
             {
-                tmp_item_modified = itemAt(event->pos());
-                if(tmp_item_modified != nullptr){
+                tmp_point = Point(event->pos().x(),event->pos().y());
+                tmp_item_modified.second = itemAt(event->pos());
+                if(tmp_item_modified.second != nullptr){
+                    //recherche dans la liste la figure correspondante.
+                    for(std::pair<My_Shape*,QGraphicsItem*> ptmp : list_figure){
+                        if(ptmp.second == tmp_item_modified.second){
+                            tmp_item_modified.first = ptmp.first;
+                        }
+                    }
+                    std::cout << "bla" << std::endl;
+                    type_item_modified = tmp_item_modified.second->type();
                     enable_buttons();
                 }
                 break;
             }
+            case 7:
+                //move
+
+                break;
+            case 8:
+                //scale
+
+                break;
+            case 9:
+                //rotate
+
+                break;
+            case 10:
+                //axial sym
+
+                break;
+            case 11:
+                //central sym
+
+                break;
             default:
                 break;
-            //polygone se fais a part, lorsqu'on clique sur le bouton fermer polygone il se créer.
         }
     }
 }
