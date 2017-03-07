@@ -24,4 +24,7 @@ add_executable(drawsheep main.cpp ${SRC_DIRECTORIES} ${HEADERS_WITH_QT_MOC})
 
 add_executable(server main_server.cpp src/Server.cpp )
 
+add_executable(client main_client.cpp src/Client.cpp )
+
+
 target_link_libraries(drawsheep Qt4::QtGui Qt4::QtXml)
