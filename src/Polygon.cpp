@@ -9,6 +9,7 @@ Polygon::Polygon(std::vector<Point> v)
 {
     try{
         if(v.size() < 3){
+            std::cout << v.size() << std::endl;
             throw std::string("Error : polygon need 3 point");
         }
         vertices = v;
@@ -63,9 +64,40 @@ void Polygon::translate(float x, float y){
 
 
 void Polygon::scale(float s){
+    Point center = gravity_center();
     for(Point p_it : vertices){
-        p_it *= s;
+        if(center.get_x() < p_it.get_x()){
+            if(center.get_y() < p_it.get_y()){
+                p_it*=s;
+            }
+            else{
+                float yP = p_it.get_y() - (p_it.get_y()*s - p_it.get_y());
+                p_it = Point(p_it.get_x()*s,yP);
+            }
+        }
+        else{
+            if(center.get_y() < p_it.get_y()){
+                float xP = p_it.get_x() - (p_it.get_x()*s - p_it.get_x());
+                p_it = Point(xP,p_it.get_y()*s);
+            }
+            else{
+                float xP = p_it.get_x() - (p_it.get_x()*s - p_it.get_x());
+                float yP = p_it.get_y() - (p_it.get_y()*s - p_it.get_y());
+                p_it = Point(xP,yP);
+            }
+        }
     }
+}
+
+
+float Polygon::ref_scale() const {
+    float max_distance = 0;
+    Point center = gravity_center();
+    for(Point p : vertices){
+        float dist = distance(p,center);
+        max_distance = max_distance < dist ? dist : max_distance;
+    }
+    return max_distance;
 }
 
 
@@ -77,6 +109,10 @@ void Polygon::rotate(float angle){
         vertices[i] = Point(vertices[i].get_x()*cosf(angle)-vertices[i].get_y()*sinf(angle),vertices[i].get_y()*cosf(angle)+vertices[i].get_x()*sinf(angle));
     }
     translate(-center.get_x(),-center.get_y());
+}
+
+Point Polygon::center() const {
+    return gravity_center();
 }
 
 void Polygon::central_sym(Point c_sym){
@@ -103,4 +139,27 @@ void Polygon::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     s1*=3;
     s2*= (1 / s1);
     return s2;
+}
+
+int Polygon::type() const{
+    return 5;
+}
+
+void Polygon::setBrush(QColor c) {
+    color = c;
+}
+
+void Polygon::setPen(QPen p) {
+    pen = p;
+}
+
+QGraphicsItem* Polygon::getItem() const{
+    QVector<QPointF> v;
+    for(Point p : vertices){
+        v.push_back(QPointF(p.get_x(),p.get_y()));
+    }
+    QGraphicsPolygonItem *p = new QGraphicsPolygonItem(v);
+    p->setBrush(QBrush(color));
+    p->setPen(pen);
+    return p;
 }

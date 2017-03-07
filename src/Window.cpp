@@ -129,6 +129,8 @@ void Window::disable_buttons() {
     m_button_rotate->setDisabled(true);
     m_button_axial_sym->setDisabled(true);
     m_button_central_sym->setDisabled(true);
+    //disable ce bouton et enable que lors de la creation polygon
+    m_button_fin_polygon->setDisabled(true);
 }
 
 void Window::clear_action(){
@@ -145,32 +147,41 @@ void Window::clear_action(){
 
 void Window::button_selection() {
     clear_action();
+    tmp_item_modified.first = nullptr;
+    tmp_item_modified.second = nullptr;
     type_button = 3;
 }
 
 void Window::button_line() {
     clear_action();
+    tmp_item_modified.first = nullptr;
+    tmp_item_modified.second = nullptr;
     type_button = 6;
 }
 
 void Window::button_ellipse() {
     clear_action();
+    tmp_item_modified.first = nullptr;
+    tmp_item_modified.second = nullptr;
     type_button = 4;
 }
 
 void Window::button_polygon() {
     clear_action();
+    m_button_fin_polygon->setDisabled(false);
+    tmp_item_modified.first = nullptr;
+    tmp_item_modified.second = nullptr;
     type_button = 5;
 }
 
 //supprime les lignes affichées temporairement et créer le polygon final.
 void Window::button_fin_polygon() {
+    std::cout << "create polygon" << std::endl;
     //si le polygone en cours de création n'a que 2 point on ne peux pas finir ce polygone
     if(queue_point.size() >= 3){
         QVector<QPointF> v;
         std::vector<Point> v2;
         for(Point p:queue_point){
-            std::cout << Point(p.get_x(),p.get_y());
             v.push_back(QPointF(p.get_x(),p.get_y()));
             v2.push_back(Point(p.get_x(),p.get_y()));
         }
@@ -194,6 +205,7 @@ void Window::button_fin_polygon() {
 }
 
 void Window::button_color_background() {
+    delete_figure_before_modif();
     QPen pen;
     QColor color_background = QColorDialog::getColor(Qt::white,this);
     switch(type_item_modified){
@@ -203,19 +215,24 @@ void Window::button_color_background() {
             break;
         case 4:
             //ellipse
-            tmp_ellipse->setBrush(QBrush(color_background));
+            tmp_item_modified.first->setBrush(color_background);
+            ((QGraphicsEllipseItem *) tmp_item_modified.second )->setBrush(QBrush(color_background));
             break;
         case 5:
             //polygon
-            tmp_polygon->setBrush(QBrush(color_background));
+            tmp_item_modified.first->setBrush(color_background);
+            ((QGraphicsPolygonItem *) tmp_item_modified.second )->setBrush(QBrush(color_background));
             break;
         default:
             break;
     }
+    scene->addItem(tmp_item_modified.second);
+    list_figure.push_back(tmp_item_modified);
     //modif tmpitem background
 }
 
 void Window::button_color_contour() {
+    delete_figure_before_modif();
     QColor color_contour = QColorDialog::getColor(Qt::white,this);
     QPen pen;
 
@@ -226,20 +243,24 @@ void Window::button_color_contour() {
     switch(type_item_modified){
         case 6:
             //line
-            tmp_line->setPen(pen);
+            tmp_item_modified.first->setPen(pen);
+            ((QGraphicsLineItem *)tmp_item_modified.second)->setPen(pen);
             break;
         case 4:
             //ellipse
-            //recup background et donnée, remove ellipse ancienne, créer nouvelle avec modif couleur, tmpEllipse = nouvelle
-            tmp_ellipse->setPen(pen);
+            tmp_item_modified.first->setPen(pen);
+            ((QGraphicsEllipseItem *)tmp_item_modified.second)->setPen(pen);
             break;
         case 5:
             //polygon
-            tmp_polygon->setPen(pen);
+            tmp_item_modified.first->setPen(pen);
+            ((QGraphicsPolygonItem *)tmp_item_modified.second)->setPen(pen);
             break;
         default:
             break;
     }
+    scene->addItem(tmp_item_modified.second);
+    list_figure.push_back(tmp_item_modified);
 }
 
 void Window::button_move() {
@@ -265,6 +286,17 @@ void Window::button_axial_sym() {
 void Window::button_central_sym() {
     clear_action();
     type_button = 11;
+}
+
+
+void Window::delete_figure_before_modif(){
+    scene->removeItem(tmp_item_modified.second);
+    //supprime la valeur sauvegarder pour la remettre après le release
+    for(std::vector<std::pair<My_Shape*,QGraphicsItem*>>::iterator i = list_figure.begin(); i < list_figure.end(); i++){
+        if(i->second == tmp_item_modified.second){
+            list_figure.erase(i);
+        }
+    }
 }
 
 //permet d'appliquer la fonction mooveEvent quand la souris bouge
@@ -300,20 +332,31 @@ void Window::mousePressEvent(QMouseEvent *event) {
         case 7:
         {
             //move
-            scene->removeItem(tmp_item_modified.second);
+            delete_figure_before_modif();
             float trans_x = actual_x - tmp_point.get_x();
             float trans_y = actual_y - tmp_point.get_y();
             tmp_point += Point(trans_x,trans_y);
-            std::cout << trans_x << " " << trans_y << std::endl;
             tmp_item_modified.first->translate(trans_x,trans_y);
             tmp_item_modified.second = tmp_item_modified.first->getItem();
             scene->addItem(tmp_item_modified.second);
             break;
         }
         case 8:
+        {
             //scale
+            scene->removeItem(tmp_item_modified.second);
+            float dist_point = distance(Point(actual_x,actual_y),tmp_point);
+            float scale = dist_point / tmp_item_modified.first->ref_scale();
+            std::cout << scale << std::endl;
+            if(scale == 0){
+                scale = 0.01;
+            }
+            tmp_item_modified.first->scale(scale);
+            tmp_item_modified.second = tmp_item_modified.first->getItem();
+            scene->addItem(tmp_item_modified.second);
 
             break;
+        }
         case 9:
             //rotate
 
@@ -383,7 +426,16 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
                 scene->addItem(tmp_line);
                 break;
             case 7:
+            {
                 //move
+                scene->removeItem(tmp_item_modified.second);
+                float trans_x = actual_x - tmp_point.get_x();
+                float trans_y = actual_y - tmp_point.get_y();
+                tmp_point += Point(trans_x,trans_y);
+                tmp_item_modified.first->translate(trans_x,trans_y);
+                tmp_item_modified.second = tmp_item_modified.first->getItem();
+                scene->addItem(tmp_item_modified.second);
+            }
 
                 break;
             case 8:
@@ -412,10 +464,12 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
 void Window::mouseReleaseEvent(QMouseEvent *event){
 
     figure_on_creation = false;
+    int actual_x = event->pos().x();
+    int actual_y = event->pos().y();
 
     if(event->button() == Qt::LeftButton){
         if(type_button != 5){
-            queue_point.push_back(Point(event->pos().x(),event->pos().y()));
+            queue_point.push_back(Point(actual_x,actual_y));
         }
 
         //affichage du point
@@ -443,6 +497,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 p.second = l;
                 list_figure.push_back(p);
 
+                std::cout << scene->items().size()<<std::endl;
                 queue_point.clear();
                 break;
             }
@@ -484,7 +539,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 scene->addItem(e);
 
                 std::pair<My_Shape *,QGraphicsItem *> p;
-                p.first = new Ellipse(center,fabsf(OTX),fabsf(OTY));
+                p.first = new Ellipse(center,fabsf(OTX/2),fabsf(OTY/2));
                 p.second = e;
                 list_figure.push_back(p);
 
@@ -523,16 +578,28 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                             tmp_item_modified.first = ptmp.first;
                         }
                     }
-                    std::cout << "bla" << std::endl;
+                    tmp_point = tmp_item_modified.first->center();
                     type_item_modified = tmp_item_modified.second->type();
                     enable_buttons();
+                }
+                else{
+                    disable_buttons();
                 }
                 break;
             }
             case 7:
+            {
                 //move
-
+                scene->removeItem(tmp_item_modified.second);
+                float trans_x = actual_x - tmp_point.get_x();
+                float trans_y = actual_y - tmp_point.get_y();
+                tmp_point += Point(trans_x,trans_y);
+                tmp_item_modified.first->translate(trans_x,trans_y);
+                tmp_item_modified.second = tmp_item_modified.first->getItem();
+                scene->addItem(tmp_item_modified.second);
+                list_figure.push_back(tmp_item_modified);
                 break;
+            }
             case 8:
                 //scale
 

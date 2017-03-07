@@ -103,10 +103,32 @@ void Line::scale(float s){
     if(s < 0){
         s=-s;
     }
-    A*=s;
-    B*=s;
+    if(A.get_x() < B.get_x()){
+        if(A.get_y() < B.get_y()){
+            B*=s;
+        }
+        else{
+            float yB = B.get_y() - (fabsf(B.get_y()*s - B.get_y()));
+            B = Point(B.get_x()*s,yB);
+        }
+    }
+    else{
+        if(A.get_y() < B.get_y()){
+            float xB = B.get_x() - (fabsf(B.get_x()*s - B.get_x()));
+            B = Point(xB,B.get_y()*s);
+        }
+        else{
+            float xB = B.get_x() - (fabsf(B.get_x()*s - B.get_x()));
+            float yB = B.get_y() - (fabsf(B.get_y()*s - B.get_y()));
+            B = Point(xB,yB);
+        }
+    }
 }
 
+
+float Line::ref_scale() const {
+    return distance(A,B);
+}
 
 void Line::rotate(float angle){
     Point mid_point = milieu_segment();
@@ -121,6 +143,10 @@ void Line::rotate(float angle){
     translate(mid_point.get_x(),mid_point.get_y());
 }
 
+Point Line::center() const {
+    return milieu_segment();
+}
+
 void Line::central_sym(Point c_sym){
     A.central_sym(c_sym);
     B.central_sym(c_sym);
@@ -132,4 +158,22 @@ void Line::axial_sym(Point p_origin_axis, Point p_extremity_axis){
 
 Point Line::milieu_segment() const{
     return Point((A.get_x()+B.get_x())/2,(A.get_y()+B.get_y())/2);
+}
+
+int Line::type() const{
+    return 6;
+}
+
+void Line::setBrush(QColor c) {
+    //pas de couleur de fond pour une ligne
+}
+
+void Line::setPen(QPen p) {
+    pen = p;
+}
+
+QGraphicsItem* Line::getItem() const{
+    QGraphicsLineItem *l = new QGraphicsLineItem(A.get_x(),A.get_y(),B.get_x(),B.get_y());
+    l->setPen(pen);
+    return l;
 }
