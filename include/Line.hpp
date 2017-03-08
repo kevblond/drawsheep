@@ -31,6 +31,8 @@ public:
     virtual void central_sym(Point c_sym);
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
 
+    void scale_line(float xb, float yb);
+    void calc_equation_cart(float &a,float &b) const;
     Point milieu_segment() const;
     float dist_point(Point p) const;
     Point projete_orthog(Point p) const;

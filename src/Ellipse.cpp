@@ -89,7 +89,7 @@ float Ellipse::ref_scale() const {
 }
 
 void Ellipse::rotate(float ang){
-    angle += ang;
+    angle = ang;
 }
 
 Point Ellipse::center() const {

@@ -288,6 +288,63 @@ void Window::delete_figure_before_modif(){
     }
 }
 
+void Window::move_and_add_tmp_item(float actual_x,float actual_y) {
+    float trans_x = actual_x - tmp_point.get_x();
+    float trans_y = actual_y - tmp_point.get_y();
+    tmp_point += Point(trans_x,trans_y);
+    tmp_item_modified.first->translate(trans_x,trans_y);
+    tmp_item_modified.second = tmp_item_modified.first->getItem();
+    scene->addItem(tmp_item_modified.second);
+}
+
+void Window::scale_and_add_tmp_item(float actual_x, float actual_y) {
+    float dist_point = distance(Point(actual_x,actual_y),tmp_point);
+    float scale = dist_point / tmp_item_modified.first->ref_scale();
+    if(scale == 0){
+        scale = 0.01;
+    }
+    //scale d'une ligne trop mauvais
+    if(type_item_modified == 6){
+        ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
+    }
+    else{
+        tmp_item_modified.first->scale(scale);
+    }
+    tmp_item_modified.second = tmp_item_modified.first->getItem();
+    scene->addItem(tmp_item_modified.second);
+}
+
+void Window::rotate_and_add_tmp_item(float actual_x, float actual_y) {
+    Point t;
+    Point p_mouse(actual_x,actual_y);
+    float angle = 0;
+
+    if(actual_x < tmp_point.get_x()){
+        if(actual_y < tmp_point.get_y()){
+            t = Line(tmp_point,Point(tmp_point.get_x(),tmp_point.get_y()+1)).projete_orthog(p_mouse);
+            angle = (float)(M_PI/2+acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse)));
+        }
+        else{
+            t = Line(tmp_point,Point(tmp_point.get_x()-1,tmp_point.get_y())).projete_orthog(p_mouse);
+            angle = (float)(M_PI + acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse)));
+        }
+    }
+    else{
+        t = Line(tmp_point,Point(tmp_point.get_x()+1,tmp_point.get_y())).projete_orthog(p_mouse);
+        if(actual_y < tmp_point.get_y()){
+            angle = acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse));
+        }
+        else{
+            angle = (float)(2*M_PI) - acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse));
+        }
+    }
+    angle *= -1;
+    tmp_item_modified.first->rotate(angle-tmp_angle_rotation);
+    tmp_angle_rotation = angle;
+    tmp_item_modified.second = tmp_item_modified.first->getItem();
+    scene->addItem(tmp_item_modified.second);
+}
+
 //permet d'appliquer la fonction mooveEvent quand la souris bouge
 //et créer un prototype de la figure jusquau relachement de la souris
 void Window::mousePressEvent(QMouseEvent *event) {
@@ -296,21 +353,21 @@ void Window::mousePressEvent(QMouseEvent *event) {
     int actual_y = event->pos().y();
     switch(type_button) {
         case 6:
-            //line
+            //empty line
             tmp_point = Point(actual_x,actual_y);
             queue_point.push_back(tmp_point);
             tmp_line = new QGraphicsLineItem(QLineF(QPointF(actual_x,actual_y),QPointF(actual_x,actual_y)));
             scene->addItem(tmp_line);
             break;
         case 4:
-            //ellipse
+            //empty ellipse
             tmp_point = Point(actual_x,actual_y);
             queue_point.push_back(tmp_point);
             tmp_ellipse = new QGraphicsEllipseItem(actual_x,actual_y,0,0);
             scene->addItem(tmp_ellipse);
             break;
         case 5:
-            //polygon
+            //empty polygon
             if(list_line_polygon.size() == 0){
                 tmp_point = Point(actual_x,actual_y);
                 queue_point.push_back(tmp_point);
@@ -322,39 +379,22 @@ void Window::mousePressEvent(QMouseEvent *event) {
         {
             //move
             delete_figure_before_modif();
-            float trans_x = actual_x - tmp_point.get_x();
-            float trans_y = actual_y - tmp_point.get_y();
-            tmp_point += Point(trans_x,trans_y);
-            tmp_item_modified.first->translate(trans_x,trans_y);
-            tmp_item_modified.second = tmp_item_modified.first->getItem();
-            scene->addItem(tmp_item_modified.second);
+            move_and_add_tmp_item(actual_x,actual_y);
             break;
         }
         case 8:
         {
             //scale
-            std::cout << "press scale" << std::endl;
             delete_figure_before_modif();
-            float dist_point = distance(Point(actual_x,actual_y),tmp_point);
-            float scale = dist_point / tmp_item_modified.first->ref_scale();
-            if(scale == 0){
-                scale = 0.01;
-            }
-            //TODO version temporaire du scale
-            //scale d'une ligne trop mauvais
-            if(type_item_modified == 6){
-                ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
-            }
-            else{
-                tmp_item_modified.first->scale(scale);
-            }
-            tmp_item_modified.second = tmp_item_modified.first->getItem();
-            scene->addItem(tmp_item_modified.second);
-
+            scale_and_add_tmp_item(actual_x,actual_y);
             break;
         }
         case 9:
+        {
             //rotate
+            delete_figure_before_modif();
+            rotate_and_add_tmp_item(actual_x,actual_y);
+        }
 
             break;
         case 10:
@@ -425,12 +465,7 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
             {
                 //move
                 scene->removeItem(tmp_item_modified.second);
-                float trans_x = actual_x - tmp_point.get_x();
-                float trans_y = actual_y - tmp_point.get_y();
-                tmp_point += Point(trans_x,trans_y);
-                tmp_item_modified.first->translate(trans_x,trans_y);
-                tmp_item_modified.second = tmp_item_modified.first->getItem();
-                scene->addItem(tmp_item_modified.second);
+                move_and_add_tmp_item(actual_x,actual_y);
             }
 
                 break;
@@ -438,35 +473,21 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
             {
                 //scale
                 scene->removeItem(tmp_item_modified.second);
-                float dist_point = distance(Point(actual_x,actual_y),tmp_point);
-                float scale = dist_point / tmp_item_modified.first->ref_scale();
-                if(scale == 0){
-                    scale = 0.01;
-                }
-                //TODO version temporaire du scale
-                //scale d'une ligne trop mauvais
-                if(type_item_modified == 6){
-                    ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
-                }
-                else{
-                    tmp_item_modified.first->scale(scale);
-                }
-                tmp_item_modified.second = tmp_item_modified.first->getItem();
-                scene->addItem(tmp_item_modified.second);
-
+                scale_and_add_tmp_item(actual_x,actual_y);
                 break;
             }
             case 9:
+            {
                 //rotate
-
+                scene->removeItem(tmp_item_modified.second);
+                rotate_and_add_tmp_item(actual_x,actual_y);
                 break;
+            }
             case 10:
                 //axial sym
-
                 break;
             case 11:
                 //central sym
-
                 break;
             default:
                 break;
@@ -569,10 +590,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 Point B = Point(event->pos().x(),event->pos().y());
                 queue_point.push_back(B);
 
-                QPointF Af = mapToScene(static_cast<int>(A.get_x()),static_cast<int>(A.get_y()));
-                QPointF Bf = mapToScene(static_cast<int>(B.get_x()),static_cast<int>(B.get_y()));
-
-                tmp_line = new QGraphicsLineItem(QLineF(QPointF(Af.x(),Af.y()),QPointF(Bf.x(),Bf.y())));
+                tmp_line = new QGraphicsLineItem(QLineF(QPointF(A.get_x(),A.get_y()),QPointF(B.get_x(),B.get_y())));
                 scene->addItem(tmp_line);
                 list_line_polygon.push_back(tmp_line);
                 tmp_line = nullptr;
@@ -594,6 +612,9 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                     tmp_point = tmp_item_modified.first->center();
                     type_item_modified = tmp_item_modified.second->type();
                     enable_buttons();
+                    if(type_item_modified == 6){
+                        m_button_color_background->setDisabled(true);
+                    }
                 }
                 else{
                     disable_buttons();
@@ -604,50 +625,31 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
             {
                 //move
                 scene->removeItem(tmp_item_modified.second);
-                float trans_x = actual_x - tmp_point.get_x();
-                float trans_y = actual_y - tmp_point.get_y();
-                tmp_point += Point(trans_x,trans_y);
-                tmp_item_modified.first->translate(trans_x,trans_y);
-                tmp_item_modified.second = tmp_item_modified.first->getItem();
-                scene->addItem(tmp_item_modified.second);
+                move_and_add_tmp_item(actual_x,actual_y);
                 list_figure.push_back(tmp_item_modified);
                 break;
             }
             case 8:
-
             {
                 //scale
                 scene->removeItem(tmp_item_modified.second);
-                float dist_point = distance(Point(actual_x,actual_y),tmp_point);
-                float scale = dist_point / tmp_item_modified.first->ref_scale();
-                if(scale == 0){
-                    scale = 0.01;
-                }
-                //TODO version temporaire du scale
-                //scale d'une ligne trop mauvais
-                if(type_item_modified == 6){
-                    ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
-                }
-                else{
-                    tmp_item_modified.first->scale(scale);
-                }
-                tmp_item_modified.second = tmp_item_modified.first->getItem();
-                scene->addItem(tmp_item_modified.second);
+                scale_and_add_tmp_item(actual_x,actual_y);
                 list_figure.push_back(tmp_item_modified);
-
                 break;
             }
             case 9:
+            {
                 //rotate
-
+                scene->removeItem(tmp_item_modified.second);
+                rotate_and_add_tmp_item(actual_x,actual_y);
+                list_figure.push_back(tmp_item_modified);
                 break;
+            }
             case 10:
                 //axial sym
-
                 break;
             case 11:
                 //central sym
-
                 break;
             default:
                 break;

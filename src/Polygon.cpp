@@ -63,30 +63,31 @@ void Polygon::translate(float x, float y){
 }
 
 
+//TODO scale du polygone à faire
 void Polygon::scale(float s){
-    Point center = gravity_center();
-    for(Point p_it : vertices){
-        if(center.get_x() < p_it.get_x()){
-            if(center.get_y() < p_it.get_y()){
-                p_it*=s;
-            }
-            else{
-                float yP = p_it.get_y() - (p_it.get_y()*s - p_it.get_y());
-                p_it = Point(p_it.get_x()*s,yP);
-            }
-        }
-        else{
-            if(center.get_y() < p_it.get_y()){
-                float xP = p_it.get_x() - (p_it.get_x()*s - p_it.get_x());
-                p_it = Point(xP,p_it.get_y()*s);
-            }
-            else{
-                float xP = p_it.get_x() - (p_it.get_x()*s - p_it.get_x());
-                float yP = p_it.get_y() - (p_it.get_y()*s - p_it.get_y());
-                p_it = Point(xP,yP);
-            }
-        }
-    }
+//    Point center = gravity_center();
+//    for(unsigned long i=0 ; i < vertices.size() ; i++){
+//        if(center.get_x() < vertices[i].get_x()){
+//            if(center.get_y() < vertices[i].get_y()){
+//                vertices[i]*=s;
+//            }
+//            else{
+//                float yP = vertices[i].get_y() - (vertices[i].get_y()*s - vertices[i].get_y());
+//                vertices[i] = Point(vertices[i].get_x()*s,yP);
+//            }
+//        }
+//        else{
+//            if(center.get_y() < vertices[i].get_y()){
+//                float xP = vertices[i].get_x() - (vertices[i].get_x()*s - vertices[i].get_x());
+//                vertices[i] = Point(xP,vertices[i].get_y()*s);
+//            }
+//            else{
+//                float xP = vertices[i].get_x() - (vertices[i].get_x()*s - vertices[i].get_x());
+//                float yP = vertices[i].get_y() - (vertices[i].get_y()*s - vertices[i].get_y());
+//                vertices[i] = Point(xP,yP);
+//            }
+//        }
+//    }
 }
 
 

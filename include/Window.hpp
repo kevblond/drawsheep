@@ -65,6 +65,8 @@ private:
     std::pair<My_Shape*,QGraphicsItem*> tmp_item_modified;
     int type_item_modified = -1;
 
+    float tmp_angle_rotation = 0;
+
     QPushButton *m_button_quit;
     QPushButton *m_button_line;
     QPushButton *m_button_ellipse;
@@ -81,6 +83,10 @@ private:
 
     int type_button = 6;
     bool figure_on_creation = false;
+
+    void move_and_add_tmp_item(float actual_x, float actual_y);
+    void scale_and_add_tmp_item(float actual_x, float actual_y);
+    void rotate_and_add_tmp_item(float actual_x, float actual_y);
 };
 
 #endif //DRAWSHEEP_WINDOW_HPP

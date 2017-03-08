@@ -54,43 +54,58 @@ Point Line::projete_orthog(Point p) const{
     float yp = p.get_y();
     float a;
     float b;
-    //si B est sur l'ordonné
-    if(xb == 0){
-        b = yb;
-        //si A est aussi sur l'ordonné
-        if(xa == 0){
-            //renvoyer le point le plus proche entre A et B
-            return distance(p,A) > distance(p,B)?B:A;
-        }
-        else{
-            a = (ya -  b)/ xa;
-        }
+    if(A.get_x() == B.get_x()){
+        return Point(A.get_x(),p.get_y());
     }
-    else{
-        //si a est sur l'ordonnée
-        if(xa == 0){
-            b = ya;
-
-            //si AB va de gauche a droite
-            if(xa < xb){
-                a = (yb-ya) / xb ;
-            }
-            //si AB va de droite a gauche
-            else{
-                a = (ya-yb) / xb;
-            }
-        }
-        //a et b calculé grace au système yA = a*xA+b et yB = a*xB+b
-        else{
-            b = (yb-ya*xb/xa)/(-xb/xa+1);
-            a = (ya -  b)/ xa;
-        }
-    }
+    calc_equation_cart(a,b);
+//    //si B est sur l'ordonné
+//    if(xb == 0){
+//        b = yb;
+//        //si A est aussi sur l'ordonné
+//        if(xa == 0){
+//            //renvoyer le point le plus proche entre A et B
+//            return distance(p,A) > distance(p,B)?B:A;
+//        }
+//        else{
+//            a = (ya -  b)/ xa;
+//        }
+//    }
+//    else{
+//        //si a est sur l'ordonnée
+//        if(xa == 0){
+//            b = ya;
+//
+//            //si AB va de gauche a droite
+//            if(xa < xb){
+//                a = (yb-ya) / xb ;
+//            }
+//            //si AB va de droite a gauche
+//            else{
+//                a = (ya-yb) / xb;
+//            }
+//        }
+//        //a et b calculé grace au système yA = a*xA+b et yB = a*xB+b
+//        else{
+//            b = (yb-ya*xb/xa)/(-xb/xa+1);
+//            a = (ya -  b)/ xa;
+//        }
+//    }
     float c = xp*xb+yp*yb-xp*xa-yp*ya;
     float xh = (-(ya-yb)*b - c) / (xa-xb+(ya-yb)*a);
     float yh = a*xh+b;
     Point h = Point(xh,yh);
     return h;
+}
+
+//TODO exception puis catch a chaque utilisation
+void Line::calc_equation_cart(float &a, float &b) const{
+    if(A.get_x()==B.get_x()){
+        //exception
+        std::cerr << "exception calc eq cart x=b" << std::endl;
+        return;
+    }
+    a = (B.get_y()-A.get_y()) / (B.get_x()-A.get_x());
+    b = A.get_y() - a * A.get_x();
 }
 
 void Line::translate(float x, float y){
@@ -103,31 +118,63 @@ void Line::scale(float s){
     if(s < 0){
         s=-s;
     }
-    if(A.get_x() < B.get_x()){
-        if(A.get_y() < B.get_y()){
-            B*=s;
-        }
-        else{
-            float yB = B.get_y() - (fabsf(B.get_y()*s - B.get_y()));
-            B = Point(B.get_x()*s,yB);
-        }
+    float a,b;
+    if(A.get_x() == B.get_x()){
+        B = Point(B.get_x(),A.get_y() + (B.get_y()-A.get_y())*s);
+        return;
+    }
+    calc_equation_cart(a,b);
+    float xb1,xb2,yb1,yb2;
+    float dist = distance(A,B);
+    float new_dist = s * dist;
+//    sqrt((xb-xa)² + (yb-ya)²) = newdist;
+//    new_dist*new_dist = (xb - A.get_x())*(xb - A.get_x()) + (yb - A.get_y())*(yb - A.get_y());
+//    axb + b = yb;
+    float apol = a*a+1;
+    float bpol = -2*A.get_x() + a*a + 2*a*b - 2*a*A.get_y();
+    float cpol = -new_dist*new_dist + A.get_x()*A.get_x() + b*b -2*b*A.get_y() -A.get_y()*A.get_y();
+    float delta = bpol * bpol - 4 * apol * cpol;
+    if(delta<0){
+        return;
+    }
+    xb1 = fabsf((bpol - sqrtf(delta))/(2*apol));
+    yb1 = a*xb1+b;
+    xb2 = fabsf((bpol + sqrtf(delta))/(2*apol));
+    yb2 = a*xb2+b;
+    if(xb1 > A.get_x())
+    {
+        B = Point(xb1,yb1);
     }
     else{
-        if(A.get_y() < B.get_y()){
-            float xB = B.get_x() - (fabsf(B.get_x()*s - B.get_x()));
-            B = Point(xB,B.get_y()*s);
-        }
-        else{
-            float xB = B.get_x() - (fabsf(B.get_x()*s - B.get_x()));
-            float yB = B.get_y() - (fabsf(B.get_y()*s - B.get_y()));
-            B = Point(xB,yB);
-        }
+        B = Point(xb2,yb2);
     }
 }
 
 
 float Line::ref_scale() const {
     return distance(A,B);
+}
+
+
+//TODO version temporaire du scale
+void Line::scale_line(float xb,float yb){
+    float a,b;
+    if(A.get_x() == xb){
+        return;
+    }
+    if(A.get_x() == B.get_x()){
+        B = Point(B.get_x(),yb);
+    }
+    else{
+        calc_equation_cart(a,b);
+        //si la courbe part trop vers le bas, le scale se fais avec le y de la souris, sinon avec x.
+        if(fabsf(a)>2){
+            B = Point((yb-b)/a,yb);
+        }
+        else{
+            B = Point(xb,a*xb+b);
+        }
+    }
 }
 
 void Line::rotate(float angle){
