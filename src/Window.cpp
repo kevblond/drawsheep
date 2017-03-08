@@ -138,8 +138,10 @@ void Window::clear_action(){
     if(type_button == 5){
         button_fin_polygon();
     }
-    type_item_modified = -1;
     tmp_line = nullptr;
+    type_item_modified = -1;
+    tmp_item_modified.first = nullptr;
+    tmp_item_modified.second = nullptr;
     list_line_polygon.clear();
     queue_point.clear();
 }
@@ -147,30 +149,22 @@ void Window::clear_action(){
 
 void Window::button_selection() {
     clear_action();
-    tmp_item_modified.first = nullptr;
-    tmp_item_modified.second = nullptr;
     type_button = 3;
 }
 
 void Window::button_line() {
     clear_action();
-    tmp_item_modified.first = nullptr;
-    tmp_item_modified.second = nullptr;
     type_button = 6;
 }
 
 void Window::button_ellipse() {
     clear_action();
-    tmp_item_modified.first = nullptr;
-    tmp_item_modified.second = nullptr;
     type_button = 4;
 }
 
 void Window::button_polygon() {
     clear_action();
     m_button_fin_polygon->setDisabled(false);
-    tmp_item_modified.first = nullptr;
-    tmp_item_modified.second = nullptr;
     type_button = 5;
 }
 
@@ -264,27 +258,22 @@ void Window::button_color_contour() {
 }
 
 void Window::button_move() {
-    clear_action();
     type_button = 7;
 }
 
 void Window::button_scale() {
-    clear_action();
     type_button = 8;
 }
 
 void Window::button_rotate() {
-    clear_action();
     type_button = 9;
 }
 
 void Window::button_axial_sym() {
-    clear_action();
     type_button = 10;
 }
 
 void Window::button_central_sym() {
-    clear_action();
     type_button = 11;
 }
 
@@ -344,14 +333,21 @@ void Window::mousePressEvent(QMouseEvent *event) {
         case 8:
         {
             //scale
-            scene->removeItem(tmp_item_modified.second);
+            std::cout << "press scale" << std::endl;
+            delete_figure_before_modif();
             float dist_point = distance(Point(actual_x,actual_y),tmp_point);
             float scale = dist_point / tmp_item_modified.first->ref_scale();
-            std::cout << scale << std::endl;
             if(scale == 0){
                 scale = 0.01;
             }
-            tmp_item_modified.first->scale(scale);
+            //TODO version temporaire du scale
+            //scale d'une ligne trop mauvais
+            if(type_item_modified == 6){
+                ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
+            }
+            else{
+                tmp_item_modified.first->scale(scale);
+            }
             tmp_item_modified.second = tmp_item_modified.first->getItem();
             scene->addItem(tmp_item_modified.second);
 
@@ -439,9 +435,27 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
 
                 break;
             case 8:
+            {
                 //scale
+                scene->removeItem(tmp_item_modified.second);
+                float dist_point = distance(Point(actual_x,actual_y),tmp_point);
+                float scale = dist_point / tmp_item_modified.first->ref_scale();
+                if(scale == 0){
+                    scale = 0.01;
+                }
+                //TODO version temporaire du scale
+                //scale d'une ligne trop mauvais
+                if(type_item_modified == 6){
+                    ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
+                }
+                else{
+                    tmp_item_modified.first->scale(scale);
+                }
+                tmp_item_modified.second = tmp_item_modified.first->getItem();
+                scene->addItem(tmp_item_modified.second);
 
                 break;
+            }
             case 9:
                 //rotate
 
@@ -497,7 +511,6 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 p.second = l;
                 list_figure.push_back(p);
 
-                std::cout << scene->items().size()<<std::endl;
                 queue_point.clear();
                 break;
             }
@@ -601,9 +614,29 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 break;
             }
             case 8:
+
+            {
                 //scale
+                scene->removeItem(tmp_item_modified.second);
+                float dist_point = distance(Point(actual_x,actual_y),tmp_point);
+                float scale = dist_point / tmp_item_modified.first->ref_scale();
+                if(scale == 0){
+                    scale = 0.01;
+                }
+                //TODO version temporaire du scale
+                //scale d'une ligne trop mauvais
+                if(type_item_modified == 6){
+                    ((Line*)tmp_item_modified.first)->scale_line(actual_x,actual_y);
+                }
+                else{
+                    tmp_item_modified.first->scale(scale);
+                }
+                tmp_item_modified.second = tmp_item_modified.first->getItem();
+                scene->addItem(tmp_item_modified.second);
+                list_figure.push_back(tmp_item_modified);
 
                 break;
+            }
             case 9:
                 //rotate
 
