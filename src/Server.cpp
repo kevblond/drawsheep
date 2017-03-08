@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 Server::Server(int port) {
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
@@ -48,13 +49,26 @@ void Server::start() {
 }
 
 void Server::read_file(int sockfd) {
-    std::string filename;
-    filename = "client" + cli_addr.sin_addr.s_addr;
+    std::string filename = "client" + std::string(inet_ntoa(cli_addr.sin_addr));
     std::ofstream file(filename);
 
-    char buffer[2048];
     long n;
-    n = recv(newsockfd,buffer,2047, 0);
+//    bool finish = false;
+//    while (!finish) {
+//        (n = recv(sockfd,buffer,2047, 0));
+//        if (n < 0)
+//            throw "ERROR server reading from socket";
+//        file << buffer;
+//        if (n < 2048)
+//            finish = true;
+//    }
+    int file_size;
+    n = recv(sockfd,&file_size,sizeof(file_size), 0);
+    if (n < 0)
+        throw "ERROR server reading from socket";
+    char buffer[file_size];
+    std::cout << file_size << std::endl;
+    n = recv(sockfd,buffer,file_size, 0);
     if (n < 0)
         throw "ERROR server reading from socket";
     file << buffer;
@@ -66,7 +80,7 @@ void Server::read_file(int sockfd) {
 void Server::send_answer(int sockfd) {
     long n;
     std::string comment = "J'ai reçu le fichier !";
-    n = write(sockfd,comment.c_str(),comment.size());
+    n = send(sockfd,comment.c_str(),comment.size(), 0);
     if (n < 0)
         throw "ERROR writing to socket";
 }

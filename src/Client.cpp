@@ -1,12 +1,10 @@
 #include <Client.hpp>
 #include <fstream>
 #include <iostream>
-#include <cstdlib>
 #include <unistd.h>
 #include <cstring>
 #include <netdb.h>
-#include <sys/types.h>
-#include <sys/socket.h>
+
 Client::Client(int port) {
     portno = port;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -30,13 +28,21 @@ Client::Client(int port) {
 
 void Client::send_file(const char * filename) {
     std::ifstream infile(filename);
-    std::string line;
-    int n;
-    while (std::getline(infile, line)) {
-        n = write(sockfd,line.c_str(),line.size());
-        if (n < 0)
-            throw "ERROR writing to socket";
-    }
+    // get length of file:
+    infile.seekg (0, infile.end);
+    int file_size = infile.tellg();
+    infile.seekg (0, infile.beg);
+
+    std::cout << file_size << std::endl;
+    char buffer[file_size];
+    long n;
+    infile.read(buffer, file_size);
+    n = send(sockfd, &file_size, sizeof(file_size), 0);
+    if (n < 0)
+        throw "ERROR writing to socket";
+    n = send(sockfd, buffer, file_size, 0);
+    if (n < 0)
+        throw "ERROR writing to socket";
     std::cout << "file sent" << std::endl;
 
 }
