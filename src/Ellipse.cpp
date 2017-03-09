@@ -4,7 +4,7 @@
 
 #include <Ellipse.hpp>
 
-Ellipse::Ellipse(const Point & cent,float rA,float rB):center(cent),rayA(rA),rayB(rB)
+Ellipse::Ellipse(const Point & cent,float rA,float rB):c(cent),rayA(rA),rayB(rB)
 {
 }
 
@@ -16,18 +16,17 @@ void Ellipse::draw(std::ostream & os) const {
 
 //approximation du perimetre
 float Ellipse::perimeter() const{
-
-    return M_PI*sqrt(2*(rayA*rayA+rayB*rayB));
+    return (float)M_PI*sqrtf(2*(rayA*rayA+rayB*rayB));
 }
 
 float Ellipse::area() const{
-    return M_PI*rayA*rayB;
+    return (float)M_PI*rayA*rayB;
 }
 
 float Ellipse::dist_origin() const{
     Point origin;
-    float x0 = center.get_x();
-    float y0 = center.get_y();
+    float x0 = c.get_x();
+    float y0 = c.get_y();
     float Ac = rayA*rayA;
     float Bc = rayB*rayB;
     //si l'origine est contenu dans l'ellipse
@@ -76,7 +75,7 @@ float Ellipse::dist_origin() const{
 }
 
 void Ellipse::translate(float x, float y){
-    center += Point(x,y);
+    c += Point(x,y);
 }
 
 
@@ -85,16 +84,42 @@ void Ellipse::scale(float s){
     rayB *= s;
 }
 
+float Ellipse::ref_scale() const {
+    return rayA>rayB?rayA:rayB;
+}
 
 void Ellipse::rotate(float ang){
-    angle += ang;
+    angle = ang;
+}
+
+Point Ellipse::center() const {
+    return c;
 }
 
 void Ellipse::central_sym(Point c_sym){
-    center.central_sym(c_sym);
+    c.central_sym(c_sym);
 }
 
 void Ellipse::axial_sym(Point p_origin_axis, Point p_extremity_axis){
-    center.axial_sym(p_origin_axis,p_extremity_axis);
+    c.axial_sym(p_origin_axis,p_extremity_axis);
+}
+
+int Ellipse::type() const{
+    return 4;
+}
+
+void Ellipse::setBrush(QColor c) {
+    color = c;
+}
+
+void Ellipse::setPen(QPen p) {
+    pen = p;
+}
+
+QGraphicsItem* Ellipse::getItem() const{
+    QGraphicsEllipseItem *e = new QGraphicsEllipseItem(c.get_x()-rayA,c.get_y()-rayB,rayA*2,rayB*2);
+    e->setBrush(QBrush(color));
+    e->setPen(pen);
+    return e;
 }
 

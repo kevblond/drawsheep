@@ -6,20 +6,29 @@
 #define DRAWSHEEP_SHAPE_HPP
 #include<iostream>
 #include<Point.hpp>
+#include<QGraphicsItem>
+#include<QBrush>
+#include<QPen>
 
-class My_Shape{
-private:
-    //mat3 matrix = matrice identité
-    //utilisé pour les rotate translate etc...
+class My_Shape {
+protected:
+    QColor color = Qt::transparent;
+    QPen pen;
 public:
+    virtual int type() const = 0;
+    virtual void setBrush(QColor c) = 0;
+    virtual void setPen(QPen p) = 0;
+    virtual QGraphicsItem* getItem() const = 0;
     virtual void draw(std::ostream &os = std::cout) const = 0;//pour le moment draw sur terminal
     virtual float area() const = 0;
     virtual float perimeter() const = 0;
     virtual float dist_origin() const = 0;
     virtual ~My_Shape(){};
-    virtual void rotate(float) = 0;
     virtual void translate(float, float) = 0;
+    virtual void rotate(float) = 0;
     virtual void scale(float) = 0;
+    virtual float ref_scale() const = 0;
+    virtual Point center() const = 0;
     virtual void central_sym(Point c_sym) = 0;
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis) = 0;
 };

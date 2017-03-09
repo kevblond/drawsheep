@@ -42,22 +42,30 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+
     void enable_buttons();
     void disable_buttons();
+    void clear_action();
+
+    void delete_figure_before_modif();
 
 
 private:
     QGraphicsScene *scene;
 
     std::vector<Point> queue_point;
-    std::vector<My_Shape *> list_figure;
+    std::vector<std::pair<My_Shape *,QGraphicsItem *>> list_figure;
 
     Point tmp_point;
     QGraphicsLineItem *tmp_line = nullptr;
     QGraphicsEllipseItem *tmp_ellipse = nullptr;
     QGraphicsPolygonItem *tmp_polygon = nullptr;
     std::vector<QGraphicsLineItem *> list_line_polygon;
-    QGraphicsItem *tmp_item_modified = nullptr;
+
+    std::pair<My_Shape*,QGraphicsItem*> tmp_item_modified;
+    int type_item_modified = -1;
+
+    float tmp_angle_rotation = 0;
 
     QPushButton *m_button_quit;
     QPushButton *m_button_line;
@@ -73,8 +81,12 @@ private:
     QPushButton *m_button_axial_sym;
     QPushButton *m_button_central_sym;
 
-    int type_button = 0;
+    int type_button = 6;
     bool figure_on_creation = false;
+
+    void move_and_add_tmp_item(float actual_x, float actual_y);
+    void scale_and_add_tmp_item(float actual_x, float actual_y);
+    void rotate_and_add_tmp_item(float actual_x, float actual_y);
 };
 
 #endif //DRAWSHEEP_WINDOW_HPP
