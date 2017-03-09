@@ -318,30 +318,40 @@ void Window::rotate_and_add_tmp_item(float actual_x, float actual_y) {
     Point t;
     Point p_mouse(actual_x,actual_y);
     float angle = 0;
+    if(distance(tmp_point,p_mouse) != 0){
+        if(actual_x < tmp_point.get_x()){
+            if(actual_y < tmp_point.get_y()){
+                t = Line(tmp_point,Point(tmp_point.get_x(),tmp_point.get_y()+1)).projete_orthog(p_mouse);
+                float adj_hyp = distance(tmp_point,t)/distance(tmp_point,p_mouse);
+                adj_hyp = adj_hyp > 1 ? 1 : adj_hyp;
+                angle = (float)(M_PI/2+acosf(adj_hyp));
+            }
+            else{
+                t = Line(tmp_point,Point(tmp_point.get_x()-1,tmp_point.get_y())).projete_orthog(p_mouse);
+                float adj_hyp = distance(tmp_point,t)/distance(tmp_point,p_mouse);
+                adj_hyp = adj_hyp > 1 ? 1 : adj_hyp;
+                angle = (float)(M_PI + acosf(adj_hyp));
+            }
+        }
+        else{
+            t = Line(tmp_point,Point(tmp_point.get_x()+1,tmp_point.get_y())).projete_orthog(p_mouse);
+            if(actual_y < tmp_point.get_y()){
+                float adj_hyp = distance(tmp_point,t)/distance(tmp_point,p_mouse);
+                adj_hyp = adj_hyp > 1 ? 1 : adj_hyp;
+                angle = acosf(adj_hyp);
+            }
+            else{
+                float adj_hyp = distance(tmp_point,t)/distance(tmp_point,p_mouse);
+                adj_hyp = adj_hyp > 1 ? 1 : adj_hyp;
+                angle = (float)(2*M_PI) - acosf(adj_hyp);
+            }
+        }
+        angle *= -1;
+        tmp_item_modified.first->rotate(angle-tmp_angle_rotation);
+        tmp_angle_rotation = angle;
+        tmp_item_modified.second = tmp_item_modified.first->getItem();
+    }
 
-    if(actual_x < tmp_point.get_x()){
-        if(actual_y < tmp_point.get_y()){
-            t = Line(tmp_point,Point(tmp_point.get_x(),tmp_point.get_y()+1)).projete_orthog(p_mouse);
-            angle = (float)(M_PI/2+acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse)));
-        }
-        else{
-            t = Line(tmp_point,Point(tmp_point.get_x()-1,tmp_point.get_y())).projete_orthog(p_mouse);
-            angle = (float)(M_PI + acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse)));
-        }
-    }
-    else{
-        t = Line(tmp_point,Point(tmp_point.get_x()+1,tmp_point.get_y())).projete_orthog(p_mouse);
-        if(actual_y < tmp_point.get_y()){
-            angle = acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse));
-        }
-        else{
-            angle = (float)(2*M_PI) - acosf(distance(tmp_point,t)/distance(tmp_point,p_mouse));
-        }
-    }
-    angle *= -1;
-    tmp_item_modified.first->rotate(angle-tmp_angle_rotation);
-    tmp_angle_rotation = angle;
-    tmp_item_modified.second = tmp_item_modified.first->getItem();
     scene->addItem(tmp_item_modified.second);
 }
 

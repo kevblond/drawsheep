@@ -89,7 +89,7 @@ float Ellipse::ref_scale() const {
 }
 
 void Ellipse::rotate(float ang){
-    angle = ang;
+    angle += ang;
 }
 
 Point Ellipse::center() const {
@@ -120,6 +120,8 @@ QGraphicsItem* Ellipse::getItem() const{
     QGraphicsEllipseItem *e = new QGraphicsEllipseItem(c.get_x()-rayA,c.get_y()-rayB,rayA*2,rayB*2);
     e->setBrush(QBrush(color));
     e->setPen(pen);
+    e->setTransformOriginPoint(c.get_x(),c.get_y());
+    e->setRotation((angle*180)/M_PI);
     return e;
 }
 

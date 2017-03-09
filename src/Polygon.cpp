@@ -104,7 +104,6 @@ float Polygon::ref_scale() const {
 
 void Polygon::rotate(float angle){
     Point center = gravity_center();
-    std::cout << center << std::endl;
     translate(-center.get_x(),-center.get_y());
     for(unsigned long i = 0 ; i < vertices.size() ; i++){
         vertices[i] = Point(vertices[i].get_x()*cosf(angle)-vertices[i].get_y()*sinf(angle),vertices[i].get_y()*cosf(angle)+vertices[i].get_x()*sinf(angle));
