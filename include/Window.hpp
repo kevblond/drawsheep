@@ -7,7 +7,6 @@
 #include <iostream>
 #include <My_Shape.hpp>
 #include <Ellipse.hpp>
-#include <Circle.hpp>
 #include <Polygon.hpp>
 #include <Line.hpp>
 #include <QApplication>
