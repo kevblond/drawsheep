@@ -409,11 +409,13 @@ void Window::mousePressEvent(QMouseEvent *event) {
             break;
         case 10:
             //axial sym
-
+            tmp_point = Point(actual_x,actual_y);
+            tmp_line = new QGraphicsLineItem(QLineF(QPointF(actual_x,actual_y),QPointF(actual_x,actual_y)));
+            scene->addItem(tmp_line);
             break;
         case 11:
             //central sym
-
+            //calcul seulement au release
             break;
         default:
             break;
@@ -495,9 +497,13 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
             }
             case 10:
                 //axial sym
+                scene->removeItem(tmp_line);
+                tmp_line = new QGraphicsLineItem(QLineF(QPointF(tmp_point.get_x(),tmp_point.get_y()),QPointF(actual_x,actual_y)));
+                scene->addItem(tmp_line);
                 break;
             case 11:
                 //central sym
+                //calcul seulement au release
                 break;
             default:
                 break;
@@ -513,9 +519,6 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
     int actual_y = event->pos().y();
 
     if(event->button() == Qt::LeftButton){
-        if(type_button != 5){
-            queue_point.push_back(Point(actual_x,actual_y));
-        }
 
         //affichage du point
         //scene->addLine(event->pos().x(),event->pos().y(),event->pos().x(),event->pos().y());
@@ -527,6 +530,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 //line
                 std::cout << "create line "<< std::endl;
                 scene->removeItem(tmp_line);
+                queue_point.push_back(Point(actual_x,actual_y));
                 tmp_line = nullptr;
                 Point A = queue_point[0];
                 Point B = queue_point[1];
@@ -551,6 +555,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                 //ellipse
                 //decoupé en 4 la creation de lellipse
                 std::cout << "create ellipse " << std::endl;
+                queue_point.push_back(Point(actual_x,actual_y));
                 scene->removeItem(tmp_ellipse);
                 tmp_ellipse = nullptr;
                 Point O = queue_point[0];
@@ -657,9 +662,21 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
             }
             case 10:
                 //axial sym
+                delete_figure_before_modif();
+                scene->removeItem(tmp_line);
+                tmp_item_modified.first->axial_sym(tmp_point,Point(actual_x,actual_y));
+                tmp_item_modified.second = tmp_item_modified.first->getItem();
+                scene->addItem(tmp_item_modified.second);
+                list_figure.push_back(tmp_item_modified);
+
                 break;
             case 11:
                 //central sym
+                delete_figure_before_modif();
+                tmp_item_modified.first->central_sym(Point(actual_x,actual_y));
+                tmp_item_modified.second = tmp_item_modified.first->getItem();
+                scene->addItem(tmp_item_modified.second);
+                list_figure.push_back(tmp_item_modified);
                 break;
             default:
                 break;

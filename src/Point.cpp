@@ -45,8 +45,8 @@ Point Point::operator* (float t) const{
 
 
 Point& Point::central_sym(Point c_sym){
-    x = c_sym.get_x() - (x-c_sym.get_x());
-    y = c_sym.get_y() - (y-c_sym.get_y());
+    x = 2 * c_sym.x - x;
+    y = 2 * c_sym.y - y;
     return *this;
 }
 
