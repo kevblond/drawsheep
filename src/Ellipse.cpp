@@ -10,10 +10,6 @@ Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen
 
 Ellipse::~Ellipse(){}
 
-void Ellipse::draw(std::ostream & os) const {
-    os << "drawEllipse " << std::endl;
-}
-
 //approximation du perimetre
 float Ellipse::perimeter() const{
     return (float)M_PI*sqrtf(2*(rayA*rayA+rayB*rayB));

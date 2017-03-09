@@ -18,7 +18,6 @@ public:
     virtual void setBrush(QColor c);
     virtual void setPen(QPen p);
     virtual QGraphicsItem* getItem() const;
-    virtual void draw(std::ostream &os = std::cout) const;
     virtual float area() const;
     virtual float perimeter() const;
     virtual float dist_origin() const;

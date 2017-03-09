@@ -20,10 +20,6 @@ Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p):color(c),pen(p)
 
 Polygon::~Polygon(){}
 
-void Polygon::draw(std::ostream & os) const {
-    os << "drawPolygon" << std::endl;
-}
-
 //triangulation pour l'aire
 float Polygon::area() const{
     float area = 0;

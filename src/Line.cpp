@@ -10,10 +10,6 @@ Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2),color
 
 Line::~Line(){}
 
-void Line::draw(std::ostream & os) const {
-    os << "drawline" << std::endl;
-}
-
 float Line::area() const{
     return 0.0f;
 }
