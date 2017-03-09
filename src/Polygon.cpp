@@ -108,7 +108,7 @@ void Polygon::rotate(float angle){
     for(unsigned long i = 0 ; i < vertices.size() ; i++){
         vertices[i] = Point(vertices[i].get_x()*cosf(angle)-vertices[i].get_y()*sinf(angle),vertices[i].get_y()*cosf(angle)+vertices[i].get_x()*sinf(angle));
     }
-    translate(-center.get_x(),-center.get_y());
+    translate(center.get_x(),center.get_y());
 }
 
 Point Polygon::center() const {
@@ -126,7 +126,6 @@ void Polygon::axial_sym(Point p_origin_axis, Point p_extremity_axis){
         vertices[i].axial_sym(p_origin_axis,p_extremity_axis);
     }
 }
-
 
  Point Polygon::gravity_center() const{
     float s1 = 0;
