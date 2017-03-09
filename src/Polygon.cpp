@@ -5,7 +5,7 @@
 #include <Polygon.hpp>
 #include <include/Line.hpp>
 
-Polygon::Polygon(std::vector<Point> v)
+Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p):color(c),pen(p)
 {
     try{
         if(v.size() < 3){

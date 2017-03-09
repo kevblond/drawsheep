@@ -12,7 +12,7 @@ class Polygon : public My_Shape {
 private:
     std::vector<Point> vertices;
 public:
-    Polygon(std::vector<Point> v);
+    Polygon(std::vector<Point> v, QColor c = Qt::transparent,QPen p = QPen());
     virtual ~Polygon();
     virtual int type() const;
     virtual void setBrush(QColor c);

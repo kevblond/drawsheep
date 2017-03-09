@@ -15,8 +15,9 @@ private:
     float rayA;
     float rayB;
     float angle = 0.0f;
-public:
-    Ellipse(const Point & cent,float rayA, float rayB);
+public:QColor color = Qt::transparent;
+    QPen pen;
+    Ellipse(const Point & cent,float rayA, float rayB,float angle=0,QColor c = Qt::transparent,QPen p = QPen());
     virtual ~Ellipse();
     virtual int type() const;
     virtual void setBrush(QColor c);

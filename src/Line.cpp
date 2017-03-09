@@ -4,7 +4,7 @@
 
 #include <Line.hpp>
 
-Line::Line(const Point & p1, const Point &p2):A(p1),B(p2)
+Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2),color(c),pen(p)
 {
 }
 

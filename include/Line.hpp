@@ -13,7 +13,7 @@ private:
     Point A;
     Point B;
 public:
-    Line(const Point & p1,const Point & p2);
+    Line(const Point & p1,const Point & p2, QColor c = Qt::transparent,QPen p = QPen());
     virtual ~Line();
     virtual int type() const;
     virtual void setBrush(QColor c);

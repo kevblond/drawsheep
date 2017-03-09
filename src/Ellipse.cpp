@@ -4,7 +4,7 @@
 
 #include <Ellipse.hpp>
 
-Ellipse::Ellipse(const Point & cent,float rA,float rB):c(cent),rayA(rA),rayB(rB)
+Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen p):c(cent),rayA(rA),rayB(rB),angle(angle),color(c),pen(p)
 {
 }
 

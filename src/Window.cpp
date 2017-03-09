@@ -164,6 +164,7 @@ void Window::button_ellipse() {
 
 void Window::button_polygon() {
     clear_action();
+    //afficher fin polygon seulement si on créer un polygon
     m_button_fin_polygon->setDisabled(false);
     type_button = 5;
 }
@@ -203,10 +204,6 @@ void Window::button_color_background() {
     QPen pen;
     QColor color_background = QColorDialog::getColor(Qt::white,this);
     switch(type_item_modified){
-        case 6:
-            //line
-            //pas de remplissage d'une ligne
-            break;
         case 4:
             //ellipse
             tmp_item_modified.first->setBrush(color_background);
@@ -216,6 +213,10 @@ void Window::button_color_background() {
             //polygon
             tmp_item_modified.first->setBrush(color_background);
             ((QGraphicsPolygonItem *) tmp_item_modified.second )->setBrush(QBrush(color_background));
+            break;
+        case 6:
+            //line
+            //pas de remplissage d'une ligne
             break;
         default:
             break;
@@ -235,11 +236,6 @@ void Window::button_color_contour() {
 
     //type lors de la selection
     switch(type_item_modified){
-        case 6:
-            //line
-            tmp_item_modified.first->setPen(pen);
-            ((QGraphicsLineItem *)tmp_item_modified.second)->setPen(pen);
-            break;
         case 4:
             //ellipse
             tmp_item_modified.first->setPen(pen);
@@ -249,6 +245,11 @@ void Window::button_color_contour() {
             //polygon
             tmp_item_modified.first->setPen(pen);
             ((QGraphicsPolygonItem *)tmp_item_modified.second)->setPen(pen);
+            break;
+        case 6:
+            //line
+            tmp_item_modified.first->setPen(pen);
+            ((QGraphicsLineItem *)tmp_item_modified.second)->setPen(pen);
             break;
         default:
             break;
@@ -615,6 +616,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
             }
             case 3:
             {
+                //selection
                 tmp_point = Point(event->pos().x(),event->pos().y());
                 tmp_item_modified.second = itemAt(event->pos());
                 if(tmp_item_modified.second != nullptr){
