@@ -15,8 +15,7 @@ private:
     float rayA;
     float rayB;
     float angle = 0.0f;
-public:QColor color = Qt::transparent;
-    QPen pen;
+public:
     Ellipse(const Point & cent,float rayA, float rayB,float angle=0,QColor c = Qt::transparent,QPen p = QPen());
     virtual ~Ellipse();
     virtual int type() const;
@@ -33,6 +32,8 @@ public:QColor color = Qt::transparent;
     virtual Point center() const;
     virtual void central_sym(Point c_sym);
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
+
+    virtual void save_to_file(const char *filename);
 };
 
 #endif //DRAWSHEEP_ELLIPSE_HPP

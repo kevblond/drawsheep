@@ -12,6 +12,7 @@ class Line : public My_Shape {
 private:
     Point A;
     Point B;
+
 public:
     Line(const Point & p1,const Point & p2, QColor c = Qt::transparent,QPen p = QPen());
     virtual ~Line();
@@ -35,6 +36,8 @@ public:
     Point milieu_segment() const;
     float dist_point(Point p) const;
     Point projete_orthog(Point p) const;
+    virtual void save_to_file(const char *filename);
+
 };
 
 

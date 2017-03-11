@@ -4,8 +4,10 @@
 
 #include <Polygon.hpp>
 #include <include/Line.hpp>
+#include <fstream>
+using namespace std;
 
-Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p):color(c),pen(p)
+Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p)
 {
     try{
         if(v.size() < 3){
@@ -16,6 +18,8 @@ Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p):color(c),pen(p)
     }catch(std::string const& chaine){
         std::cerr << chaine << std::endl;
     }
+    this->color = c;
+    this->pen = p;
 }
 
 Polygon::~Polygon(){}
@@ -157,4 +161,28 @@ QGraphicsItem* Polygon::getItem() const{
     p->setBrush(QBrush(color));
     p->setPen(pen);
     return p;
+}
+
+void Polygon::save_to_file(const char *filename) {
+    fstream file;
+
+    file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+
+
+    // If file does not exist, Create new file
+    if (!file ) {
+        cout << "Cannot open file, file does not exist. Creating new file..";
+
+        file.open(filename,  fstream::in | fstream::out | fstream::trunc);
+    }
+    file << type() << "\n";
+    file << vertices.size() << "\n";
+    for (Point p : vertices) {
+        file << p.get_x() << " " << p.get_y() << "\n";
+    }
+    int r, g, b, a;
+    color.getRgb(&r, &g, &b, &a);
+    file << r << " " << g << " "<< b << " " << a << "\n";
+    file.close();
+
 }

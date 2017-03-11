@@ -30,6 +30,8 @@ public:
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
 
     Point gravity_center() const;
+    virtual void save_to_file(const char *filename);
+
 };
 
 

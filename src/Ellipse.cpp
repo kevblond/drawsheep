@@ -3,9 +3,13 @@
 //
 
 #include <Ellipse.hpp>
+#include <fstream>
+using namespace std;
 
-Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen p):c(cent),rayA(rA),rayB(rB),angle(angle),color(c),pen(p)
+Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen p):c(cent),rayA(rA),rayB(rB),angle(angle)
 {
+    this->color = c;
+    this->pen = p;
 }
 
 Ellipse::~Ellipse(){}
@@ -120,4 +124,28 @@ QGraphicsItem* Ellipse::getItem() const{
     e->setRotation((angle*180)/M_PI);
     return e;
 }
+
+void Ellipse::save_to_file(const char *filename) {
+    fstream file;
+
+    file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+
+
+    // If file does not exist, Create new file
+    if (!file ) {
+        cout << "Cannot open file, file does not exist. Creating new file..";
+
+        file.open(filename,  fstream::in | fstream::out | fstream::trunc);
+    }
+    file << type() << "\n";
+    file << c.get_x() << " " << c.get_y() << "\n";
+    file << rayA << " " << rayB << "\n";
+    file << angle << "\n";
+    int r, g, b, a;
+    color.getRgb(&r, &g, &b, &a);
+    file << r << " " << g << " "<< b << " " << a << "\n";
+    file.close();
+
+}
+
 

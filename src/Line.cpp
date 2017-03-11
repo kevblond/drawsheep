@@ -3,9 +3,12 @@
 //
 
 #include <Line.hpp>
-
-Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2),color(c),pen(p)
+#include <fstream>
+using namespace std;
+Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2)
 {
+    this->color = c;
+    this->pen = p;
 }
 
 Line::~Line(){}
@@ -219,4 +222,27 @@ QGraphicsItem* Line::getItem() const{
     QGraphicsLineItem *l = new QGraphicsLineItem(A.get_x(),A.get_y(),B.get_x(),B.get_y());
     l->setPen(pen);
     return l;
+}
+
+void Line::save_to_file(const char *filename) {
+    fstream file;
+
+    file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
+
+
+    // If file does not exist, Create new file
+    if (!file ) {
+        cout << "Cannot open file, file does not exist. Creating new file..";
+
+        file.open(filename,  fstream::in | fstream::out | fstream::trunc);
+    }
+    file << type() << "\n";
+    file << A.get_x() << " " << A.get_y() << "\n";
+    file << B.get_x() << " " << B.get_y() << "\n";
+
+    int r, g, b, a;
+    color.getRgb(&r, &g, &b, &a);
+    file << r << " " << g << " "<< b << " " << a << "\n";
+    file.close();
+
 }
