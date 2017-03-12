@@ -5,13 +5,13 @@
 #include <cstring>
 #include <netdb.h>
 
-Client::Client(int port) {
+Client::Client(const char *hostname, int port) {
     portno = port;
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         throw "ERROR opening socket";
     // TODO Modifier plus tard pour co a distance
-    server = gethostbyname("localhost");
+    server = gethostbyname(hostname);
     if (server == NULL) {
         throw "ERROR, no such host\n";
     }

@@ -11,7 +11,7 @@ private :
     struct hostent *server;
 
 public :
-    Client(int port);
+    Client(const char *hostname, int port);
 
     ~Client();
 

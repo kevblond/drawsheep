@@ -5,11 +5,21 @@
 
 #include <Window.hpp>
 #include <QColorDialog>
+#include <QInputDialog>
+#include <QDir>
 
 Window::Window(){
     scene = new QGraphicsScene(this);
     setFixedSize(1500,900);
     this->setScene(scene);
+
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Connexion au server"),
+                                         tr("nom / Ip serveur:"), QLineEdit::Normal,
+                                         "localhost", &ok);
+    if (ok && !text.isEmpty()) {
+        client = new Client(text.toStdString().c_str(), 20000);
+    }
 
     //création d'une ligne diagonale transparente pour éviter le recadrage de la fenetre
     QPen pen(Qt::transparent);
@@ -32,6 +42,7 @@ Window::Window(){
     m_button_rotate = new QPushButton("Rotation",this);
     m_button_axial_sym = new QPushButton("Symetrie Axiale",this);
     m_button_central_sym = new QPushButton("Symetrie Centrale",this);
+    m_button_save = new QPushButton("Sauvegarder", this);
 
     m_button_quit->setToolTip("quittez l'application");
     m_button_selection->setToolTip("selectionner une figure pour lui appliquer des modifications");
@@ -46,6 +57,7 @@ Window::Window(){
     m_button_rotate->setToolTip("rotationner la figure");
     m_button_axial_sym->setToolTip("appliquer une symetrie axiale a la figure depuis le point clique");
     m_button_central_sym->setToolTip("appliquer une symétrie centrale a la figure depuis la ligne creee");
+    m_button_save->setToolTip("sauvegarder et envoyer au serveur");
 
     m_button_quit->setFixedSize(100, 25);
     m_button_selection->setFixedSize(100, 25);
@@ -60,6 +72,8 @@ Window::Window(){
     m_button_rotate->setFixedSize(100, 25);
     m_button_axial_sym->setFixedSize(150, 25);
     m_button_central_sym->setFixedSize(150, 25);
+    m_button_save->setFixedSize(100, 25);
+
 
     m_button_selection->move(0,25);
     m_button_line->move(0,50);
@@ -73,6 +87,7 @@ Window::Window(){
     m_button_rotate->move(100,100);
     m_button_axial_sym->move(100,125);
     m_button_central_sym->move(100,150);
+    m_button_save->move(0,150);
 
 //    la souris montre que le bouton est cliquable
     m_button_quit->setCursor(Qt::PointingHandCursor);
@@ -88,6 +103,7 @@ Window::Window(){
     m_button_rotate->setCursor(Qt::PointingHandCursor);
     m_button_axial_sym->setCursor(Qt::PointingHandCursor);
     m_button_central_sym->setCursor(Qt::PointingHandCursor);
+    m_button_save->setCursor(Qt::PointingHandCursor);
 
     //les buttons n'apparaisse que si l'on a selectionner une figure
     disable_buttons();
@@ -106,6 +122,8 @@ Window::Window(){
     QObject::connect(m_button_rotate,SIGNAL(clicked()),this,SLOT(button_rotate()));
     QObject::connect(m_button_axial_sym,SIGNAL(clicked()),this,SLOT(button_axial_sym()));
     QObject::connect(m_button_central_sym,SIGNAL(clicked()),this,SLOT(button_central_sym()));
+    QObject::connect(m_button_save,SIGNAL(clicked()),this,SLOT(button_save()));
+
 
 }
 
@@ -276,6 +294,26 @@ void Window::button_axial_sym() {
 
 void Window::button_central_sym() {
     type_button = 11;
+}
+
+void Window::button_save() {
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Sauvegarder et envoyer au serveur"),
+                                         tr("Nom du fichier:"), QLineEdit::Normal,
+                                         "save.txt", &ok);
+    if (ok && !text.isEmpty()) {
+        for (std::pair<My_Shape *, QGraphicsItem*> shape : list_figure) {
+            My_Shape *my_shape = shape.first;
+            my_shape->save_to_file(text.toStdString().c_str());
+        }
+    }
+
+    try {
+        client->send_file(text.toStdString().c_str());
+    } catch (const char *err){
+        std::cerr << err << std::endl;
+        return;
+    }
 }
 
 
