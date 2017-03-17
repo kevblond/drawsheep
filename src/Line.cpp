@@ -57,38 +57,6 @@ Point Line::projete_orthog(Point p) const{
         return Point(A.get_x(),p.get_y());
     }
     calc_equation_cart(a,b);
-//    //si B est sur l'ordonné
-//    if(xb == 0){
-//        b = yb;
-//        //si A est aussi sur l'ordonné
-//        if(xa == 0){
-//            //renvoyer le point le plus proche entre A et B
-//            return distance(p,A) > distance(p,B)?B:A;
-//        }
-//        else{
-//            a = (ya -  b)/ xa;
-//        }
-//    }
-//    else{
-//        //si a est sur l'ordonnée
-//        if(xa == 0){
-//            b = ya;
-//
-//            //si AB va de gauche a droite
-//            if(xa < xb){
-//                a = (yb-ya) / xb ;
-//            }
-//            //si AB va de droite a gauche
-//            else{
-//                a = (ya-yb) / xb;
-//            }
-//        }
-//        //a et b calculé grace au système yA = a*xA+b et yB = a*xB+b
-//        else{
-//            b = (yb-ya*xb/xa)/(-xb/xa+1);
-//            a = (ya -  b)/ xa;
-//        }
-//    }
     float c = xp*xb+yp*yb-xp*xa-yp*ya;
     float xh = (-(ya-yb)*b - c) / (xa-xb+(ya-yb)*a);
     float yh = a*xh+b;
