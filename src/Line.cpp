@@ -4,7 +4,6 @@
 
 #include <Line.hpp>
 #include <fstream>
-using namespace std;
 Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2)
 {
     this->color = c;
@@ -68,7 +67,7 @@ Point Line::projete_orthog(Point p) const{
 void Line::calc_equation_cart(float &a, float &b) const{
     if(A.get_x()==B.get_x()){
         //exception
-        std::cerr << "exception calc eq cart x=b" << std::endl;
+//        std::cerr << "exception calc eq cart x=b" << std::endl;
         return;
     }
     a = (B.get_y()-A.get_y()) / (B.get_x()-A.get_x());
@@ -81,40 +80,38 @@ void Line::translate(float x, float y){
     B+=p;
 }
 
+//non fonctionnel
 void Line::scale(float s){
-    if(s < 0){
-        s=-s;
-    }
-    float a,b;
-    if(A.get_x() == B.get_x()){
-        B = Point(B.get_x(),A.get_y() + (B.get_y()-A.get_y())*s);
-        return;
-    }
-    calc_equation_cart(a,b);
-    float xb1,xb2,yb1,yb2;
-    float dist = distance(A,B);
-    float new_dist = s * dist;
-//    sqrt((xb-xa)² + (yb-ya)²) = newdist;
-//    new_dist*new_dist = (xb - A.get_x())*(xb - A.get_x()) + (yb - A.get_y())*(yb - A.get_y());
-//    axb + b = yb;
-    float apol = a*a+1;
-    float bpol = -2*A.get_x() + a*a + 2*a*b - 2*a*A.get_y();
-    float cpol = -new_dist*new_dist + A.get_x()*A.get_x() + b*b -2*b*A.get_y() -A.get_y()*A.get_y();
-    float delta = bpol * bpol - 4 * apol * cpol;
-    if(delta<0){
-        return;
-    }
-    xb1 = fabsf((bpol - sqrtf(delta))/(2*apol));
-    yb1 = a*xb1+b;
-    xb2 = fabsf((bpol + sqrtf(delta))/(2*apol));
-    yb2 = a*xb2+b;
-    if(xb1 > A.get_x())
-    {
-        B = Point(xb1,yb1);
-    }
-    else{
-        B = Point(xb2,yb2);
-    }
+//    if(s < 0){
+//        s=-s;
+//    }
+//    float a,b;
+//    if(A.get_x() == B.get_x()){
+//        B = Point(B.get_x(),A.get_y() + (B.get_y()-A.get_y())*s);
+//        return;
+//    }
+//    calc_equation_cart(a,b);
+//    float xb1,xb2,yb1,yb2;
+//    float dist = distance(A,B);
+//    float new_dist = s * dist;
+//    float apol = a*a+1;
+//    float bpol = -2*A.get_x() + a*a + 2*a*b - 2*a*A.get_y();
+//    float cpol = -new_dist*new_dist + A.get_x()*A.get_x() + b*b -2*b*A.get_y() -A.get_y()*A.get_y();
+//    float delta = bpol * bpol - 4 * apol * cpol;
+//    if(delta<0){
+//        return;
+//    }
+//    xb1 = fabsf((bpol - sqrtf(delta))/(2*apol));
+//    yb1 = a*xb1+b;
+//    xb2 = fabsf((bpol + sqrtf(delta))/(2*apol));
+//    yb2 = a*xb2+b;
+//    if(xb1 > A.get_x())
+//    {
+//        B = Point(xb1,yb1);
+//    }
+//    else{
+//        B = Point(xb2,yb2);
+//    }
 }
 
 
@@ -122,13 +119,13 @@ float Line::ref_scale() const {
     return distance(A,B);
 }
 
-
-//TODO version temporaire du scale
+//scale spécial pour la ligne.
 void Line::scale_line(float xb,float yb){
     float a,b;
     if(A.get_x() == xb){
         return;
     }
+
     if(A.get_x() == B.get_x()){
         B = Point(B.get_x(),yb);
     }
@@ -147,13 +144,10 @@ void Line::scale_line(float xb,float yb){
 void Line::rotate(float angle){
     Point mid_point = milieu_segment();
     //rotation depuis l'origine plus facile
-
     translate(-mid_point.get_x(),-mid_point.get_y());
-    //{
     //rotation dans le meme sens peut importe A et B
     B = Point(B.get_x()*cosf(angle)-B.get_y()*sinf(angle),B.get_y()*cosf(angle)+B.get_x()*sinf(angle));
     A = Point(A.get_x()*cosf(angle)-A.get_y()*sinf(angle),A.get_y()*cosf(angle)+A.get_x()*sinf(angle));
-    //}
     translate(mid_point.get_x(),mid_point.get_y());
 }
 
@@ -193,16 +187,16 @@ QGraphicsItem* Line::getItem() const{
 }
 
 void Line::save_to_file(const char *filename) {
-    fstream file;
+    std::fstream file;
 
     file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
 
 
     // If file does not exist, Create new file
     if (!file ) {
-        cout << "Cannot open file, file does not exist. Creating new file..";
+        std::cout << "Cannot open file, file does not exist. Creating new file..";
 
-        file.open(filename,  fstream::in | fstream::out | fstream::trunc);
+        file.open(filename,  std::fstream::in | std::fstream::out | std::fstream::trunc);
     }
     file << type() << "\n";
     file << A.get_x() << " " << A.get_y() << "\n";

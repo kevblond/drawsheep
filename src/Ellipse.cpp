@@ -4,7 +4,6 @@
 
 #include <Ellipse.hpp>
 #include <fstream>
-using namespace std;
 
 Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen p):c(cent),rayA(rA),rayB(rB),angle(angle)
 {
@@ -35,21 +34,18 @@ float Ellipse::dist_origin() const{
     }
     //coef directeur de la droite origin-centre
     float a = x0==0 ? 0 : y0 / x0;
-    //b = 0 pour la droite ax+b
-    //eq ellipse : (x-x0)² / rayA² + (y-y0)² / rayB² = 1
-    //eq line : y = a x
-    //systeme a deux solution ( les deux intersections de lellipse avec la droite)
-    // delta = 8B²x0A²ay0 - 4B²A²y0² - 4A²B⁴ - 4 A²a²B²x0² + 4A⁴a²B²
-    // x1 = (2B²x0+2A²ay0 - sqrt(delta) ) / 2B² + 2A²a²  et y1 = ax1
-    // x2 = (2B²x0+2A²ay0 + sqrt(delta) ) / 2B² + 2A²a²  et y2 = ax2
+    //delta de l'équation du second degré de la première equation du système à deux équations produit pour le calcul.
     float delta = 8 * Bc * x0 * Ac * a * y0 - 4 * Bc * Ac * y0*y0 + 4 * Ac * Bc*Bc - 4 * Ac * a*a * Bc * x0*x0 + 4 * Ac*Ac * a*a * Bc;
     if(delta < 0){
-        std::cerr << "delta < 0 distance origin" << std::endl;
+        //TODO exception
+//        std::cerr << "delta < 0 distance origin" << std::endl;
         exit(EXIT_FAILURE);
     }
+    //calcul de la distance entre l'origine et le point (x_inc,y_inc) qui représente le point de l'ellipse le plus proche de l'origine.
     if(delta == 0){
         float x = 2*Bc*x0+2*Ac*a*y0 / (2*Bc + 2*Ac*a*a);
         float y = a*x;
+        //prise en compte de l'angle
         float x_inc = x * cosf(angle) + y * sinf(angle);
         float y_inc = -x * sinf(angle) + y * cosf(angle);
         return distance(Point(x_inc,y_inc),origin);
@@ -126,16 +122,16 @@ QGraphicsItem* Ellipse::getItem() const{
 }
 
 void Ellipse::save_to_file(const char *filename) {
-    fstream file;
+    std::fstream file;
 
     file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
 
 
     // If file does not exist, Create new file
     if (!file ) {
-        cout << "Cannot open file, file does not exist. Creating new file..";
+        std::cout << "Cannot open file, file does not exist. Creating new file..";
 
-        file.open(filename,  fstream::in | fstream::out | fstream::trunc);
+        file.open(filename,  std::fstream::in | std::fstream::out | std::fstream::trunc);
     }
     file << type() << "\n";
     file << c.get_x() << " " << c.get_y() << "\n";

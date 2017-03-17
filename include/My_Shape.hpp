@@ -4,11 +4,10 @@
 
 #ifndef DRAWSHEEP_SHAPE_HPP
 #define DRAWSHEEP_SHAPE_HPP
-#include<iostream>
 #include<Point.hpp>
 #include<QGraphicsItem>
-#include<QBrush>
 #include<QPen>
+#include<iostream>
 
 class My_Shape {
 protected:

@@ -4,10 +4,7 @@
 
 #ifndef DRAWSHEEP_ELLIPSE_HPP
 #define DRAWSHEEP_ELLIPSE_HPP
-#include<Point.hpp>
 #include <My_Shape.hpp>
-#include <cmath>
-
 
 class Ellipse : public My_Shape{
 private:

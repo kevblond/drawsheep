@@ -3,20 +3,22 @@
 //
 
 #include <Polygon.hpp>
-#include <include/Line.hpp>
+#include <Line.hpp>
 #include <fstream>
-using namespace std;
+#define MAX 400000
 
 Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p)
 {
+    //TODO Exception impossible car evité fonctionnelement
     try{
         if(v.size() < 3){
-            std::cout << v.size() << std::endl;
-            throw std::string("Error : polygon need 3 point");
+//            std::cout << v.size() << std::endl;
+//            throw std::string("Error : polygon need 3 point");
+            return;
         }
         vertices = v;
     }catch(std::string const& chaine){
-        std::cerr << chaine << std::endl;
+//        std::cerr << chaine << std::endl;
     }
     this->color = c;
     this->pen = p;
@@ -44,7 +46,7 @@ float Polygon::perimeter() const{
 
 float Polygon::dist_origin() const{
     Point origin;
-    float dist_min = 400000;
+    float dist_min = MAX;
     for(unsigned long i = 0,j = vertices.size()-1 ; i < vertices.size() ; j=i++){
         Line l(vertices[i],vertices[j]);
         float dist_line = l.dist_point(origin);
@@ -63,7 +65,7 @@ void Polygon::translate(float x, float y){
 }
 
 
-//TODO scale du polygone à faire
+//scale du polygon non fonctionnel
 void Polygon::scale(float s){
 //    Point center = gravity_center();
 //    for(unsigned long i=0 ; i < vertices.size() ; i++){
@@ -100,7 +102,6 @@ float Polygon::ref_scale() const {
     }
     return max_distance;
 }
-
 
 void Polygon::rotate(float angle){
     Point center = gravity_center();
@@ -164,16 +165,16 @@ QGraphicsItem* Polygon::getItem() const{
 }
 
 void Polygon::save_to_file(const char *filename) {
-    fstream file;
+    std::fstream file;
 
     file.open(filename, std::fstream::in | std::fstream::out | std::fstream::app);
 
 
     // If file does not exist, Create new file
     if (!file ) {
-        cout << "Cannot open file, file does not exist. Creating new file..";
+        std::cout << "Cannot open file, file does not exist. Creating new file..";
 
-        file.open(filename,  fstream::in | fstream::out | fstream::trunc);
+        file.open(filename,  std::fstream::in | std::fstream::out | std::fstream::trunc);
     }
     file << type() << "\n";
     file << vertices.size() << "\n";

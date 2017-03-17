@@ -4,17 +4,11 @@
 
 #ifndef DRAWSHEEP_WINDOW_HPP
 #define DRAWSHEEP_WINDOW_HPP
-#include <iostream>
 #include <My_Shape.hpp>
-#include <Ellipse.hpp>
-#include <Polygon.hpp>
-#include <Line.hpp>
-#include <QApplication>
 #include <QPushButton>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMouseEvent>
-#include <QGraphicsLineItem>
 #include <QObject>
 #include <Client.hpp>
 

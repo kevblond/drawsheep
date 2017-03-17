@@ -3,7 +3,7 @@
 //
 
 #include <Point.hpp>
-#include <include/Line.hpp>
+#include <Line.hpp>
 
 Point::Point(float a, float b):x(a),y(b)
 {
@@ -16,7 +16,6 @@ float Point::get_x() const {
 float Point::get_y() const {
     return y;
 }
-
 
 bool Point::operator== (const Point & p) const{
     return p.x == x && p.y == y;
@@ -54,12 +53,6 @@ Point& Point::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     Line l(p_origin_axis,p_extremity_axis);
     Point transpose = l.projete_orthog(*this);
     return central_sym(transpose);
-}
-
-std::ostream & operator<< (std::ostream & os, const Point & p)
-{
-    os << '(' << p.x << ',' << p.y << ')';
-    return os;
 }
 
 float distance(Point p1, Point p2){

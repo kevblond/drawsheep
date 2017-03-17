@@ -4,7 +4,6 @@
 
 #ifndef DRAWSHEEP_LINE_HPP
 #define DRAWSHEEP_LINE_HPP
-#include <Point.hpp>
 #include <My_Shape.hpp>
 
 

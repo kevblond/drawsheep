@@ -4,8 +4,6 @@
 
 #ifndef DRAWSHEEP_POINT_HPP
 #define DRAWSHEEP_POINT_HPP
-#include<iostream>
-#include<cmath>
 
 class Point {
 private:
@@ -22,7 +20,6 @@ public:
     Point operator* (float t) const;
     Point& central_sym(Point c_sym);
     Point& axial_sym(Point p_origin_axis, Point p_extremity_axis);
-    friend std::ostream & operator<< (std::ostream & os, const Point & p);
     friend float distance(Point p1,Point p2);
 };
 
