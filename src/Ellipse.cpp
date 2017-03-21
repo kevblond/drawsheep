@@ -5,6 +5,15 @@
 #include <Ellipse.hpp>
 #include <fstream>
 
+/**
+ *  constructeur de l'ellipse
+ *  @param cent centre
+ *  @param rA rayon horizontal
+ *  @param rB rayon vertical
+ *  @param angle angle de rotation
+ *  @param c couleur interne
+ *  @param p couleur contour
+ */
 Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen p):c(cent),rayA(rA),rayB(rB),angle(angle)
 {
     this->color = c;
@@ -13,15 +22,27 @@ Ellipse::Ellipse(const Point & cent,float rA,float rB,float angle,QColor c, QPen
 
 Ellipse::~Ellipse(){}
 
-//approximation du perimetre
+/**
+ * perimètre de la figure
+ * @return périmètre
+ */
 float Ellipse::perimeter() const{
+    //pour l'ellipse le périmètre est une approximation
     return (float)M_PI*sqrtf(2*(rayA*rayA+rayB*rayB));
 }
 
+/**
+ * aire de la figure
+ * @return aire
+ */
 float Ellipse::area() const{
     return (float)M_PI*rayA*rayB;
 }
 
+/**
+ * distance entre la figure et le point d'origine
+ * @return distance figure/origine
+ */
 float Ellipse::dist_origin() const{
     Point origin;
     float x0 = c.get_x();
@@ -37,9 +58,7 @@ float Ellipse::dist_origin() const{
     //delta de l'équation du second degré de la première equation du système à deux équations produit pour le calcul.
     float delta = 8 * Bc * x0 * Ac * a * y0 - 4 * Bc * Ac * y0*y0 + 4 * Ac * Bc*Bc - 4 * Ac * a*a * Bc * x0*x0 + 4 * Ac*Ac * a*a * Bc;
     if(delta < 0){
-        //TODO exception
-//        std::cerr << "delta < 0 distance origin" << std::endl;
-        exit(EXIT_FAILURE);
+        throw "delta < 0 distance origin";
     }
     //calcul de la distance entre l'origine et le point (x_inc,y_inc) qui représente le point de l'ellipse le plus proche de l'origine.
     if(delta == 0){
@@ -70,48 +89,94 @@ float Ellipse::dist_origin() const{
 
 }
 
+/**
+ * translation de la figure par les coordonnées (x,y)
+ * @param x coordonnée x
+ * @param y coordonnée y
+ */
 void Ellipse::translate(float x, float y){
     c += Point(x,y);
 }
 
-
+/**
+ * agrandissement/rétrecissement de la figure
+ * @param s valeur de l'agrandissement/rétrecissement
+ */
 void Ellipse::scale(float s){
     rayA *= s;
     rayB *= s;
 }
 
+/**
+ * reférence du scale, c'est à dire que cette fonction
+ * sera utilisé pour calculer l'argument à donner pour le scale.
+ * @return référence pour le scale
+ */
 float Ellipse::ref_scale() const {
     return rayA>rayB?rayA:rayB;
 }
 
+/**
+ * rotation de la figure par l'angle ang
+ * @param ang angle de rotation
+ */
 void Ellipse::rotate(float ang){
     angle += ang;
 }
 
+/**
+ * renvoie du centre de la figure
+ * @return point du centre de la figure
+ */
 Point Ellipse::center() const {
     return c;
 }
 
+/**
+ * applique une symétrie centrale à la figure par le point c_sym
+ * @param c_sym point central de la symétrie
+ */
 void Ellipse::central_sym(Point c_sym){
     c.central_sym(c_sym);
 }
 
+/**
+ *  applique une symétrie axiale à la figure par la droite passant par les deux points en paramètre
+ * @param p_origin_axis origine de la droite
+ * @param p_extremity_axis extrémité de la droite
+ */
 void Ellipse::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     c.axial_sym(p_origin_axis,p_extremity_axis);
 }
 
+/**
+ *  renvoie le type de la figure, utilisé pour différencier les figures
+ * @return entier représentant le type de la figure
+ */
 int Ellipse::type() const{
     return 4;
 }
 
+/**
+ * modifie la couleur interne de la figure
+ * @param c couleur
+ */
 void Ellipse::setBrush(QColor c) {
     color = c;
 }
 
+/**
+ * modifie la couleur du contour de la figure
+ * @param p QPen du contour de la figure
+ */
 void Ellipse::setPen(QPen p) {
     pen = p;
 }
 
+/**
+ *  calcul et renvoie l'item représentant la figure pour la scene
+ * @return pointeur vers un nouveau QGraphicsItem représentant la figure
+ */
 QGraphicsItem* Ellipse::getItem() const{
     QGraphicsEllipseItem *e = new QGraphicsEllipseItem(c.get_x()-rayA,c.get_y()-rayB,rayA*2,rayB*2);
     e->setBrush(QBrush(color));
@@ -121,6 +186,10 @@ QGraphicsItem* Ellipse::getItem() const{
     return e;
 }
 
+/**
+ * sauvegarde les données de la figure dans un fichier
+ * @param filename nom du fichier
+ */
 void Ellipse::save_to_file(const char *filename) {
     std::fstream file;
 

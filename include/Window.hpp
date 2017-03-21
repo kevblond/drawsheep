@@ -29,6 +29,7 @@ public slots:
     void button_axial_sym();
     void button_central_sym();
     void button_save();
+    void button_delete();
 
 public:
     Window();
@@ -78,8 +79,10 @@ private:
     QPushButton *m_button_axial_sym;
     QPushButton *m_button_central_sym;
     QPushButton *m_button_save;
+    QPushButton *m_button_delete;
 
-    int type_button = 6;
+    //bouton de selection par defaut
+    int type_button = 3;
     bool figure_on_creation = false;
 
     void move_and_add_tmp_item(float actual_x, float actual_y);

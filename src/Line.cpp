@@ -4,6 +4,13 @@
 
 #include <Line.hpp>
 #include <fstream>
+/**
+ * constructeur de la ligne
+ * @param p1 premier point
+ * @param p2 deuxième point
+ * @param c couleur interne
+ * @param p contour
+ */
 Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2)
 {
     this->color = c;
@@ -12,20 +19,38 @@ Line::Line(const Point & p1, const Point &p2, QColor c,QPen p):A(p1),B(p2)
 
 Line::~Line(){}
 
+/**
+ * aire de la figure
+ * @return aire
+ */
 float Line::area() const{
     return 0.0f;
 }
 
+/**
+* perimètre de la figure
+* @return périmètre
+*/
 float Line::perimeter() const {
     return distance(A,B);
 }
 
+/**
+ * distance entre la figure et le point d'origine
+ * @return distance figure/origine
+ */
 float Line::dist_origin() const{
     Point origin;
     return dist_point(origin);
 }
 
+/**
+ * distance entre la ligne et un point
+ * @param p point
+ * @return distance ligne/point
+ */
 float Line::dist_point(Point p) const {
+    Point origin;
     //calcul du projetté orthogonal
     Point h = projete_orthog(p);
     //h contenu dans le segment AB
@@ -40,6 +65,11 @@ float Line::dist_point(Point p) const {
     }
 }
 
+/**
+ * projeté orthogonal d'un point sur la ligne
+ * @param p point
+ * @return point du projete orthogonal resultant
+ */
 Point Line::projete_orthog(Point p) const{
     if(A==B){
         return A;
@@ -55,7 +85,11 @@ Point Line::projete_orthog(Point p) const{
     if(A.get_x() == B.get_x()){
         return Point(A.get_x(),p.get_y());
     }
-    calc_equation_cart(a,b);
+    try{
+        calc_equation_cart(a,b);
+    }catch(std::string s){
+        return Point(A.get_x(),p.get_y());
+    }
     float c = xp*xb+yp*yb-xp*xa-yp*ya;
     float xh = (-(ya-yb)*b - c) / (xa-xb+(ya-yb)*a);
     float yh = a*xh+b;
@@ -63,24 +97,34 @@ Point Line::projete_orthog(Point p) const{
     return h;
 }
 
-//TODO exception puis catch a chaque utilisation
+/**
+ * calcul de l'équation cartésienne ax+b de la ligne
+ * @param a modifie le coefficient directeur
+ * @param b modifie l'ordonnée à l'origine
+ */
 void Line::calc_equation_cart(float &a, float &b) const{
     if(A.get_x()==B.get_x()){
-        //exception
-//        std::cerr << "exception calc eq cart x=b" << std::endl;
-        return;
+        throw "droite verticale";
     }
     a = (B.get_y()-A.get_y()) / (B.get_x()-A.get_x());
     b = A.get_y() - a * A.get_x();
 }
 
+/**
+ * translation de la figure par les coordonnées (x,y)
+ * @param x coordonnée x
+ * @param y coordonnée y
+ */
 void Line::translate(float x, float y){
     Point p(x,y);
     A+=p;
     B+=p;
 }
 
-//non fonctionnel
+/**
+ * ATTENTION : scale non fonctionnel
+ * @param s
+ */
 void Line::scale(float s){
 //    if(s < 0){
 //        s=-s;
@@ -114,22 +158,27 @@ void Line::scale(float s){
 //    }
 }
 
-
+/**
+ * reférence du scale, c'est à dire que cette fonction
+ * sera utilisé pour calculer l'argument à donner pour le scale.
+ * @return référence pour le scale
+ */
 float Line::ref_scale() const {
     return distance(A,B);
 }
 
-//scale spécial pour la ligne.
+/**
+ * scale spécial pour la ligne
+ * @param xb coordonnée x du clic de souris
+ * @param yb coordonnée y du clic de souris
+ */
 void Line::scale_line(float xb,float yb){
     float a,b;
+    //la ligne ne doit pas devenir un point
     if(A.get_x() == xb){
         return;
     }
-
-    if(A.get_x() == B.get_x()){
-        B = Point(B.get_x(),yb);
-    }
-    else{
+    try{
         calc_equation_cart(a,b);
         //si la courbe part trop vers le bas, le scale se fais avec le y de la souris, sinon avec x.
         if(fabsf(a)>2){
@@ -138,9 +187,16 @@ void Line::scale_line(float xb,float yb){
         else{
             B = Point(xb,a*xb+b);
         }
+    }catch(std::string s){
+        //le cas ou la ligne est vertical
+        B = Point(B.get_x(),yb);
     }
 }
 
+/**
+ * rotation de la figure par l'angle ang
+ * @param ang angle de rotation
+ */
 void Line::rotate(float angle){
     Point mid_point = milieu_segment();
     //rotation depuis l'origine plus facile
@@ -151,41 +207,80 @@ void Line::rotate(float angle){
     translate(mid_point.get_x(),mid_point.get_y());
 }
 
+/**
+ * renvoie du centre de la figure
+ * @return point du centre de la figure
+ */
 Point Line::center() const {
     return milieu_segment();
 }
 
+/**
+ * applique une symétrie centrale à la figure par le point c_sym
+ * @param c_sym point central de la symétrie
+ */
 void Line::central_sym(Point c_sym){
     A.central_sym(c_sym);
     B.central_sym(c_sym);
 }
+
+
+/**
+ *  applique une symétrie axiale à la figure par la droite passant par les deux points en paramètre
+ * @param p_origin_axis origine de la droite
+ * @param p_extremity_axis extrémité de la droite
+ */
 void Line::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     A.axial_sym(p_origin_axis,p_extremity_axis);
     B.axial_sym(p_origin_axis,p_extremity_axis);
 }
 
+/**
+ * calcul du milieu de la ligne
+ * @return point du milieu
+ */
 Point Line::milieu_segment() const{
     return Point((A.get_x()+B.get_x())/2,(A.get_y()+B.get_y())/2);
 }
 
+/**
+ *  renvoie le type de la figure, utilisé pour différencier les figures
+ * @return entier représentant le type de la figure
+ */
 int Line::type() const{
     return 6;
 }
 
+/**
+ * modifie la couleur interne de la figure
+ * @param c couleur
+ */
 void Line::setBrush(QColor c) {
     //pas de couleur de fond pour une ligne
 }
 
+/**
+ * modifie la couleur du contour de la figure
+ * @param p QPen du contour de la figure
+ */
 void Line::setPen(QPen p) {
     pen = p;
 }
 
+/**
+ *  calcul et renvoie l'item représentant la figure pour la scene
+ * @return pointeur vers un nouveau QGraphicsItem représentant la figure
+ */
 QGraphicsItem* Line::getItem() const{
     QGraphicsLineItem *l = new QGraphicsLineItem(A.get_x(),A.get_y(),B.get_x(),B.get_y());
     l->setPen(pen);
     return l;
 }
 
+/**
+ * sauvegarde les données de la figure dans un fichier
+ * @param filename nom du fichier
+ */
 void Line::save_to_file(const char *filename) {
     std::fstream file;
 

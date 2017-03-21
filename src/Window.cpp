@@ -6,12 +6,12 @@
 #include <Window.hpp>
 #include <QColorDialog>
 #include <QInputDialog>
-#include <QDir>
 #include <QApplication>
-#include <Ellipse.hpp>
 #include <Polygon.hpp>
+#include <Ellipse.hpp>
 #include <Line.hpp>
 
+///constructeur de la fenêtre utilisateur
 Window::Window(){
     scene = new QGraphicsScene(this);
     setFixedSize(1500,900);
@@ -28,13 +28,15 @@ Window::Window(){
     //création d'une ligne diagonale transparente pour éviter le recadrage de la fenetre
     QPen pen(Qt::transparent);
     QLineF line(0,0,1500,900);
-    scene->addLine(line,pen);
+    QGraphicsLineItem *l = new QGraphicsLineItem(line);
+    l->setVisible(false);
+    scene->addItem(l);
 
-    //init de l'item selectionné
+    //initialisation de l'item de selection
     tmp_item_modified.first = nullptr;
     tmp_item_modified.second = nullptr;
 
-    //init des boutons
+    //initialisation des boutons
     m_button_quit = new QPushButton("Quittez",this);
     m_button_selection = new QPushButton("Selection",this);
     m_button_line = new QPushButton("Ligne",this);
@@ -49,6 +51,7 @@ Window::Window(){
     m_button_axial_sym = new QPushButton("Symetrie Axiale",this);
     m_button_central_sym = new QPushButton("Symetrie Centrale",this);
     m_button_save = new QPushButton("Sauvegarder", this);
+    m_button_delete = new QPushButton("Supprimer", this);
 
     m_button_quit->setToolTip("quittez l'application");
     m_button_selection->setToolTip("selectionner une figure pour lui appliquer des modifications");
@@ -64,6 +67,7 @@ Window::Window(){
     m_button_axial_sym->setToolTip("appliquer une symetrie axiale a la figure depuis le point clique");
     m_button_central_sym->setToolTip("appliquer une symétrie centrale a la figure depuis la ligne creee");
     m_button_save->setToolTip("sauvegarder et envoyer au serveur");
+    m_button_delete->setToolTip("supprimer la figure selectionnée");
 
     //taille
     m_button_quit->setFixedSize(100, 25);
@@ -80,6 +84,7 @@ Window::Window(){
     m_button_axial_sym->setFixedSize(150, 25);
     m_button_central_sym->setFixedSize(150, 25);
     m_button_save->setFixedSize(100, 25);
+    m_button_delete->setFixedSize(100,25);
 
     //placement
     m_button_selection->move(0,25);
@@ -95,8 +100,9 @@ Window::Window(){
     m_button_axial_sym->move(100,125);
     m_button_central_sym->move(100,150);
     m_button_save->move(0,150);
+    m_button_delete->move(100,175);
 
-//    la souris montre que le bouton est cliquable
+    //la souris montre que le bouton est cliquable
     m_button_quit->setCursor(Qt::PointingHandCursor);
     m_button_selection->setCursor(Qt::PointingHandCursor);
     m_button_line->setCursor(Qt::PointingHandCursor);
@@ -111,8 +117,9 @@ Window::Window(){
     m_button_axial_sym->setCursor(Qt::PointingHandCursor);
     m_button_central_sym->setCursor(Qt::PointingHandCursor);
     m_button_save->setCursor(Qt::PointingHandCursor);
+    m_button_delete->setCursor(Qt::PointingHandCursor);
 
-    //les buttons de modification n'apparaisse que si l'on a selectionnée une figure
+    //les buttons de modification n'apparaissent que si l'on a selectionné une figure
     disable_buttons();
 
     //assocation des boutons avec leur fonction respective
@@ -130,12 +137,12 @@ Window::Window(){
     QObject::connect(m_button_axial_sym,SIGNAL(clicked()),this,SLOT(button_axial_sym()));
     QObject::connect(m_button_central_sym,SIGNAL(clicked()),this,SLOT(button_central_sym()));
     QObject::connect(m_button_save,SIGNAL(clicked()),this,SLOT(button_save()));
-
+    QObject::connect(m_button_delete,SIGNAL(clicked()),this,SLOT(button_delete()));
 }
 
 Window::~Window(){}
 
-//dégriser les boutons de modifications
+///dégriser les boutons de modifications
 void Window::enable_buttons() {
     m_button_color_background->setDisabled(false);
     m_button_color_contour->setDisabled(false);
@@ -144,9 +151,10 @@ void Window::enable_buttons() {
     m_button_rotate->setDisabled(false);
     m_button_axial_sym->setDisabled(false);
     m_button_central_sym->setDisabled(false);
+    m_button_delete->setDisabled(false);
 }
 
-//griser les boutons de modifications
+///griser les boutons de modifications
 void Window::disable_buttons() {
     m_button_color_background->setDisabled(true);
     m_button_color_contour->setDisabled(true);
@@ -155,11 +163,12 @@ void Window::disable_buttons() {
     m_button_rotate->setDisabled(true);
     m_button_axial_sym->setDisabled(true);
     m_button_central_sym->setDisabled(true);
-    //disable ce bouton et enable que lors de la creation polygone
+    m_button_delete->setDisabled(true);
+    //disable ce bouton et enable que lors de la creation d'un polygone
     m_button_fin_polygon->setDisabled(true);
 }
 
-//passage d'un boutons à un autre en nettoyant les valeurs
+///passage d'un boutons à un autre en nettoyant les valeurs
 void Window::clear_action(){
     disable_buttons();
     if(type_button == 5){
@@ -173,21 +182,25 @@ void Window::clear_action(){
     queue_point.clear();
 }
 
+///slot du boutton de selection
 void Window::button_selection() {
     clear_action();
     type_button = 3;
 }
 
+///slot du boutton de création de ligne
 void Window::button_line() {
     clear_action();
     type_button = 6;
 }
 
+///slot du boutton de création d'ellipse
 void Window::button_ellipse() {
     clear_action();
     type_button = 4;
 }
 
+///slot du boutton de création de polygone
 void Window::button_polygon() {
     clear_action();
     //afficher fin polygon seulement si on créer un polygone
@@ -195,7 +208,7 @@ void Window::button_polygon() {
     type_button = 5;
 }
 
-//supprime les lignes affichées temporairement et créer le polygone final.
+///supprime les lignes affichées temporairement et créer le polygone final
 void Window::button_fin_polygon() {
     std::cout << "create polygon" << std::endl;
     //si le polygone en cours de création n'a que 2 point on ne peux pas finir ce polygone
@@ -225,6 +238,7 @@ void Window::button_fin_polygon() {
     queue_point.clear();
 }
 
+///slot du boutton de coloration interne de la figure selectionnée
 void Window::button_color_background() {
     delete_figure_before_modif();
     QPen pen;
@@ -252,6 +266,7 @@ void Window::button_color_background() {
     //modif tmpitem background
 }
 
+///slot du boutton de coloration du contour de la figure séléctionnée
 void Window::button_color_contour() {
     delete_figure_before_modif();
     QColor color_contour = QColorDialog::getColor(Qt::white,this);
@@ -284,26 +299,32 @@ void Window::button_color_contour() {
     list_figure.push_back(tmp_item_modified);
 }
 
+///slot du boutton de déplacement de la figure selectionnée
 void Window::button_move() {
     type_button = 7;
 }
 
+///slot du boutton d'agrandissement/rétrecissement de la figure selectionnée
 void Window::button_scale() {
     type_button = 8;
 }
 
+///slot du boutton de rotation de la figure selectionnée
 void Window::button_rotate() {
     type_button = 9;
 }
 
+///slot du boutton de symétrie axiale de la figure selectionnée
 void Window::button_axial_sym() {
     type_button = 10;
 }
 
+///slot du boutton de symétrie centrale de la figure selectionnée
 void Window::button_central_sym() {
     type_button = 11;
 }
 
+///slot du boutton de sauvegarde du dessin
 void Window::button_save() {
     bool ok;
     QString text = QInputDialog::getText(this, tr("Sauvegarder et envoyer au serveur"),
@@ -323,8 +344,19 @@ void Window::button_save() {
         return;
     }
 }
-//TODO bouton suppression de figure selectionnée
 
+///slot du boutton de suppression de la figure selectionnée
+void Window::button_delete() {
+    delete_figure_before_modif();
+    clear_action();
+    type_button = 3;
+}
+
+/**
+ * suppression de la figure selectionnée
+ * utilisé pendant le clic de souris pour supprimé l'ancienne figure avant de créer la nouvelle
+ * mais aussi pour supprimer définitivement avec le boutton supprimer
+ */
 void Window::delete_figure_before_modif(){
     scene->removeItem(tmp_item_modified.second);
     //supprime la valeur sauvegarder pour la remettre après le release
@@ -335,6 +367,12 @@ void Window::delete_figure_before_modif(){
     }
 }
 
+/**
+ *  déplace et ajoute un item provisoire à la vue
+ *  utilisé lors du déplacement de souris en restant appuyé
+ * @param actual_x position x de la souris
+ * @param actual_y position y de la souris
+ */
 void Window::move_and_add_tmp_item(float actual_x,float actual_y) {
     float trans_x = actual_x - tmp_point.get_x();
     float trans_y = actual_y - tmp_point.get_y();
@@ -344,6 +382,12 @@ void Window::move_and_add_tmp_item(float actual_x,float actual_y) {
     scene->addItem(tmp_item_modified.second);
 }
 
+/**
+ * agrandis et ajoute un item provisoire à la vue
+ * utilisé lors du déplacement de souris en restant appuyé
+ * @param actual_x position x de la souris
+ * @param actual_y position y de la souris
+ */
 void Window::scale_and_add_tmp_item(float actual_x, float actual_y) {
     float dist_point = distance(Point(actual_x,actual_y),tmp_point);
     float scale = dist_point / tmp_item_modified.first->ref_scale();
@@ -361,6 +405,12 @@ void Window::scale_and_add_tmp_item(float actual_x, float actual_y) {
     scene->addItem(tmp_item_modified.second);
 }
 
+/**
+ * rotationne et ajoute un item provisoire à la vue
+ * utilisé lors du déplacement de souris en restant appuyé
+ * @param actual_x position x de la souris
+ * @param actual_y position y de la souris
+ */
 void Window::rotate_and_add_tmp_item(float actual_x, float actual_y) {
     Point t;
     Point p_mouse(actual_x,actual_y);
@@ -402,8 +452,13 @@ void Window::rotate_and_add_tmp_item(float actual_x, float actual_y) {
     scene->addItem(tmp_item_modified.second);
 }
 
-//permet d'appliquer la fonction mooveEvent quand la souris bouge
-//et créer un prototype de la figure jusqu'au relachement de la souris
+/**
+ * lors du clic de la souris, en fonction du boutton préselectionné la fonction
+ * applique différent algorithme :
+ * - création de figure vide(ligne, ellipse, polygone)
+ * - modification de figure selectionnée(déplacement,agrandissement,rotation,symetrie
+ * @param event evenement de la souris
+ */
 void Window::mousePressEvent(QMouseEvent *event) {
     figure_on_creation = true;
     int actual_x = event->pos().x();
@@ -469,7 +524,14 @@ void Window::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-//modifie le prototype de la figure jusqu'au relachement de la souris
+
+/**
+ * pendant le déplacement de la souris, si le clic est enfoncé applique différents algorithmes
+ * en fonction du boutton préselectionné :
+ * - modification de la figure en cours de création(ligne,ellipse,polygone)
+ * - modification de la figure selectionné(déplacement,agrandissement,rotation,symétrie)
+ * @param event evenement de la souris
+ */
 void Window::mouseMoveEvent(QMouseEvent *event) {
     if(figure_on_creation){
         int actual_x = event->pos().x();
@@ -558,7 +620,15 @@ void Window::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-//créer la forme dessiné
+/**
+ * au relachement du clic de la souris, applique différents algorithmes
+ * en fonction du boutton préselectionné :
+ * - création final de la figure(ligne,ellipse)
+ * - création d'une ligne du polygone
+ * - selection de l'item dans la scene
+ * - modification final de la figure sélectionnée(déplacement,agrandissement,rotation,symétrie)
+ * @param event evenement de la souris
+ */
 void Window::mouseReleaseEvent(QMouseEvent *event){
 
     figure_on_creation = false;
@@ -669,7 +739,7 @@ void Window::mouseReleaseEvent(QMouseEvent *event){
                     }
                 }
                 if(!itemFind){
-                    //TODO exception
+                    throw "item selectionné introuvable dans les données";
                 }
                 tmp_point = tmp_item_modified.first->center();
                 type_item_modified = tmp_item_modified.second->type();

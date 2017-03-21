@@ -7,26 +7,28 @@
 #include <fstream>
 #define MAX 400000
 
-Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p)
+/**
+ * constructeur du polygone, exception si il n'y a pas assez d'argument
+ * @param v liste de point du polygone
+ * @param c couleur interne
+ * @param p contour
+ */
+Polygon::Polygon(std::vector<Point> v, QColor c ,QPen p)throw()
 {
-    //TODO Exception impossible car evité fonctionnelement
-    try{
-        if(v.size() < 3){
-//            std::cout << v.size() << std::endl;
-//            throw std::string("Error : polygon need 3 point");
-            return;
-        }
-        vertices = v;
-    }catch(std::string const& chaine){
-//        std::cerr << chaine << std::endl;
+    if(v.size() < 3){
+        throw "few argument, need 3 point for building a polygon";
     }
+    vertices = v;
     this->color = c;
     this->pen = p;
 }
 
 Polygon::~Polygon(){}
 
-//triangulation pour l'aire
+/**
+ * aire de la figure
+ * @return aire
+ */
 float Polygon::area() const{
     float area = 0;
     for(unsigned long i = 0,j = vertices.size()-1 ; i < vertices.size() ; j=i++){
@@ -35,7 +37,10 @@ float Polygon::area() const{
     return std::abs(area/2.0f);
 }
 
-//calcul la somme des distances entre tout les points du polygone
+/**
+ * perimètre de la figure
+ * @return périmètre
+ */
 float Polygon::perimeter() const{
     float sum_dist = 0;
     for(unsigned long i = 0,j = vertices.size()-1 ; i < vertices.size() ; j=i++){
@@ -44,6 +49,10 @@ float Polygon::perimeter() const{
     return sum_dist;
 }
 
+/**
+ * distance entre la figure et le point d'origine
+ * @return distance figure/origine
+ */
 float Polygon::dist_origin() const{
     Point origin;
     float dist_min = MAX;
@@ -57,6 +66,11 @@ float Polygon::dist_origin() const{
     return dist_min;
 }
 
+/**
+ * translation de la figure par les coordonnées (x,y)
+ * @param x coordonnée x
+ * @param y coordonnée y
+ */
 void Polygon::translate(float x, float y){
     Point p(x,y);
     for(unsigned long i = 0 ; i < vertices.size() ; i++){
@@ -65,7 +79,10 @@ void Polygon::translate(float x, float y){
 }
 
 
-//scale du polygon non fonctionnel
+/**
+ * ATTENTION : scale non fonctionnel
+ * @param s
+ */
 void Polygon::scale(float s){
 //    Point center = gravity_center();
 //    for(unsigned long i=0 ; i < vertices.size() ; i++){
@@ -93,6 +110,11 @@ void Polygon::scale(float s){
 }
 
 
+/**
+ * reférence du scale, c'est à dire que cette fonction
+ * sera utilisé pour calculer l'argument à donner pour le scale.
+ * @return référence pour le scale
+ */
 float Polygon::ref_scale() const {
     float max_distance = 0;
     Point center = gravity_center();
@@ -103,6 +125,10 @@ float Polygon::ref_scale() const {
     return max_distance;
 }
 
+/**
+ * rotation de la figure par l'angle ang
+ * @param ang angle de rotation
+ */
 void Polygon::rotate(float angle){
     Point center = gravity_center();
     translate(-center.get_x(),-center.get_y());
@@ -112,22 +138,39 @@ void Polygon::rotate(float angle){
     translate(center.get_x(),center.get_y());
 }
 
+/**
+ * renvoie du centre de la figure
+ * @return point du centre de la figure
+ */
 Point Polygon::center() const {
     return gravity_center();
 }
 
+/**
+ * applique une symétrie centrale à la figure par le point c_sym
+ * @param c_sym point central de la symétrie
+ */
 void Polygon::central_sym(Point c_sym){
     for(unsigned long i = 0 ; i < vertices.size() ; i++){
         vertices[i].central_sym(c_sym);
     }
 }
 
+/**
+ *  applique une symétrie axiale à la figure par la droite passant par les deux points en paramètre
+ * @param p_origin_axis origine de la droite
+ * @param p_extremity_axis extrémité de la droite
+ */
 void Polygon::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     for(unsigned long i = 0 ; i < vertices.size() ; i++){
         vertices[i].axial_sym(p_origin_axis,p_extremity_axis);
     }
 }
 
+/**
+ * calcul du centre de gravité du polygone
+ * @return point du centre de gravité
+ */
  Point Polygon::gravity_center() const{
     float s1 = 0;
     Point s2(0,0);
@@ -141,18 +184,34 @@ void Polygon::axial_sym(Point p_origin_axis, Point p_extremity_axis){
     return s2;
 }
 
+/**
+ *  renvoie le type de la figure, utilisé pour différencier les figures
+ * @return entier représentant le type de la figure
+ */
 int Polygon::type() const{
     return 5;
 }
 
+/**
+ * modifie la couleur interne de la figure
+ * @param c couleur
+ */
 void Polygon::setBrush(QColor c) {
     color = c;
 }
 
+/**
+ * modifie la couleur du contour de la figure
+ * @param p QPen du contour de la figure
+ */
 void Polygon::setPen(QPen p) {
     pen = p;
 }
 
+/**
+ *  calcul et renvoie l'item représentant la figure pour la scene
+ * @return pointeur vers un nouveau QGraphicsItem représentant la figure
+ */
 QGraphicsItem* Polygon::getItem() const{
     QVector<QPointF> v;
     for(Point p : vertices){
@@ -164,6 +223,10 @@ QGraphicsItem* Polygon::getItem() const{
     return p;
 }
 
+/**
+ * sauvegarde les données de la figure dans un fichier
+ * @param filename nom du fichier
+ */
 void Polygon::save_to_file(const char *filename) {
     std::fstream file;
 
