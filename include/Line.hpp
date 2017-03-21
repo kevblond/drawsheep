@@ -11,6 +11,8 @@ class Line : public My_Shape {
 private:
     Point A;
     Point B;
+    void calc_equation_cart(float &a,float &b) const;
+    Point milieu_segment() const;
 
 public:
     Line(const Point & p1,const Point & p2, QColor c = Qt::transparent,QPen p = QPen());
@@ -29,14 +31,11 @@ public:
     virtual Point center() const;
     virtual void central_sym(Point c_sym);
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
-
-    void scale_line(float xb, float yb);
-    void calc_equation_cart(float &a,float &b) const;
-    Point milieu_segment() const;
-    float dist_point(Point p) const;
-    Point projete_orthog(Point p) const;
     virtual void save_to_file(const char *filename);
 
+    void scale_line(float xb, float yb);
+    float dist_point(Point p) const;
+    Point projete_orthog(Point p) const;
 };
 
 

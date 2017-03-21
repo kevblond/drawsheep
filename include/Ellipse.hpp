@@ -29,7 +29,6 @@ public:
     virtual Point center() const;
     virtual void central_sym(Point c_sym);
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
-
     virtual void save_to_file(const char *filename);
 };
 

@@ -11,6 +11,7 @@
 class Polygon : public My_Shape {
 private:
     std::vector<Point> vertices;
+    Point gravity_center() const;
 public:
     Polygon(std::vector<Point> v, QColor c = Qt::transparent,QPen p = QPen())throw();
     virtual ~Polygon();
@@ -28,8 +29,6 @@ public:
     virtual Point center() const;
     virtual void central_sym(Point c_sym);
     virtual void axial_sym(Point p_origin_axis, Point p_extremity_axis);
-
-    Point gravity_center() const;
     virtual void save_to_file(const char *filename);
 
 };

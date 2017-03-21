@@ -39,11 +39,6 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
-    void enable_buttons();
-    void disable_buttons();
-    void clear_action();
-
-    void delete_figure_before_modif();
 
 
 private:
@@ -88,6 +83,11 @@ private:
     void move_and_add_tmp_item(float actual_x, float actual_y);
     void scale_and_add_tmp_item(float actual_x, float actual_y);
     void rotate_and_add_tmp_item(float actual_x, float actual_y);
+    void enable_buttons();
+    void disable_buttons();
+    void clear_action();
+
+    void delete_figure_before_modif();
 };
 
 #endif //DRAWSHEEP_WINDOW_HPP
